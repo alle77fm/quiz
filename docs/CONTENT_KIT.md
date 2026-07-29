@@ -13,6 +13,12 @@
 > refinada por caminho `q12a`/`q12b` (ver `SCORING_MATRIX.md` §4); mapa principal
 > fechado por par de dimensões (`eixoDoMapa`); reafirmado que a hipótese de 48
 > `reportEcho` não é critério de aceite (§2).
+>
+> **Correção pós-Fase-0:** regra de contagem de textos de tela declarada
+> explicitamente (§4); Tela 6 recontada — total de textos de tela sobe de 23 para
+> **24**; rótulos de campo de formulário listados à parte, `[PENDENTE · ALEXANDRE]`
+> (§4.1); item novo no Grupo A de §8 — ratificação do critério de seleção da
+> dimensão complementar.
 
 ---
 
@@ -97,18 +103,30 @@ proibidos em `LANGUAGE_RULES.md` §2. Cada grupo abaixo lista apenas as regras
 
 ## 4. Grupo C — Textos de tela (`FINAL_SEQUENCE.md`)
 
+**Regra de contagem** (declarada aqui, aplicada uniformemente às nove telas em
+`FINAL_SEQUENCE.md` §15): conta como texto de tela todo texto exibido à
+participante que precise ser redigido, incluindo título, subtítulo, corpo, aviso,
+rótulo de opção e CTA. **Não contam:** os textos dos dois consentimentos
+(Grupo D, `PRIVACY_RULES.md`) e rótulos de campo de formulário (§4.1 abaixo).
+
 | Tela | Itens |
 |---|---|
-| 0. Entrada da experiência (nova) | 5 |
+| 0. Entrada da experiência | 5 |
 | 1. Processamento | 1 |
 | 2. Prévia do mapa | 4 |
 | 3. Intenção | 4 |
 | 4. Ponte para a terapia | 3 |
 | 5. Mapa pronto | 2 |
-| 6. Captura e consentimentos (mensagem de confiança) | 1 |
-| 7. Resultado completo (reconhecimento + nota de validade do link, nova) | 2 |
+| 6. Captura e consentimentos (mensagem de confiança + CTA) | **2** |
+| 7. Resultado completo (reconhecimento + nota de validade do link) | 2 |
 | 8. Feedback | 1 |
-| **Subtotal** | **23** |
+| **Subtotal** | **24** |
+
+**Correção nesta revisão:** a Tela 6 estava subcontada em 1 — a versão anterior
+somava só a mensagem de confiança e deixava de fora o CTA de envio, apesar de a
+especificação original impor restrição explícita sobre ele ("CTA não usa a palavra
+'análise'"), o que por si só já o tornava um texto redigido e contável. Subtotal
+sobe de 23 para **24**. Ver `FINAL_SEQUENCE.md` §15 para a decomposição completa.
 
 **Regras adicionais deste grupo:**
 - Tela 0: sem promessa de resultado, benefício ou transformação; sem estimativa de
@@ -118,6 +136,20 @@ proibidos em `LANGUAGE_RULES.md` §2. Cada grupo abaixo lista apenas as regras
 - Tela 6: CTA não usa a palavra "análise".
 - Tela 7: abre com reconhecimento, não com constatação de falta; a nota de validade
   do link não descreve o armazenamento como permanente ou indefinido.
+
+### 4.1 Rótulos de campo de formulário — listados à parte, não somados ao Grupo C
+
+`[PENDENTE · ALEXANDRE]`, cada um — decisão de UI genérica, não conteúdo da
+Jeruska:
+
+| Tela | Campo |
+|---|---|
+| 6. Captura e consentimentos | Rótulo do campo "nome" |
+| 6. Captura e consentimentos | Rótulo do campo "WhatsApp" |
+| 8. Feedback | Rótulo do campo de nota (1–5) |
+| 8. Feedback | Rótulo do campo de comentário |
+
+Quatro rótulos, fora do total de 24.
 
 ## 5. Grupo D — Consentimentos (`PRIVACY_RULES.md`)
 
@@ -150,9 +182,9 @@ fila de escrita** — ver §0.
 | `label` de alternativa | 68 |
 | `reportEcho` | ≤ 56 (hipótese de planejamento: 48) |
 | Blocos de relatório | 50 |
-| Textos de tela | 23 |
-| **Total (limite superior)** | **≤ 197** |
-| **Total (hipótese de planejamento, com reportEcho=48)** | **189** |
+| Textos de tela | **24** (corrigido de 23 — Tela 6 subcontada, ver §4) |
+| **Total (limite superior)** | **≤ 198** |
+| **Total (hipótese de planejamento, com reportEcho=48)** | **190** |
 
 ### 7.2 Total geral do que a psicóloga precisa escrever (todos os grupos)
 
@@ -160,11 +192,14 @@ fila de escrita** — ver §0.
 |---|---|
 | A — Alternativas (label + reportEcho) | 68 + ≤56 |
 | B — Blocos de relatório | 50 |
-| C — Textos de tela | 23 |
+| C — Textos de tela | 24 |
 | D — Consentimentos | 2 |
 | E — Definições de dimensão | 6 |
-| **Total geral (limite superior)** | **≤ 205** |
-| **Total geral (hipótese de planejamento)** | **197** |
+| **Total geral (limite superior)** | **≤ 206** |
+| **Total geral (hipótese de planejamento)** | **198** |
+
+Não incluído em nenhum total acima: os quatro rótulos de campo de formulário
+(§4.1), que são `[PENDENTE · ALEXANDRE]`, não conteúdo da Jeruska.
 
 ## 8. Classificação das pendências por fase
 
@@ -194,6 +229,12 @@ Responsável: Jeruska, em todos os itens.
 - Ratificação da orientação positiva das seis dimensões, dimensão por dimensão
   (`SCORING_MATRIX.md` §7) — o mecanismo já está fechado; falta a Jeruska
   confirmar que cada definição que ela escrever respeita essa orientação.
+- **Ratificação do critério de seleção da dimensão complementar** (`SCORING_MATRIX.md`
+  §10.2, item novo desta correção) — duas opções documentadas (maior necessidade,
+  vigente, ou maior score normalizado); a regra vigente já pode ser usada para
+  implementar o motor da Fase 2, e trocar de opção depois é alteração de uma única
+  função de seleção, sem impacto em inventário, orçamento de palavras ou número de
+  blocos.
 
 ### Grupo B — bloqueiam a Fase 3 e a homologação funcional
 
@@ -229,8 +270,9 @@ estrito), cardinalidades (`q01=4`, `q15=8`, `q12a`/`q12b` separados), mecanismo 
 mapa (par de dimensões, `eixoDoMapa`), normalização 0–100, cobertura mínima (três
 perguntas por caminho, diferença máxima dois), retenção (90 dias), reenvio por
 script (`retry-delivery`), estrutura da Tela 0, ausência de coleta de gênero,
-ausência de PDF/LLM/n8n/painel administrativo, inventários consolidados (68 labels,
-≤56 `reportEcho`, 50 blocos, 23 textos de tela, cenários 528/793/848/848).
+ausência de PDF/LLM/n8n/painel administrativo, cardinalidade exata de 2 por par de
+eixo (`SCORING_MATRIX.md` §8.1), inventários consolidados (68 labels, ≤56
+`reportEcho`, 50 blocos, **24** textos de tela, cenários 528/793/848/848).
 
 ## 9. Conferência cruzada com `QUIZ_CONTENT.md` e `REPORT_COMPOSER.md`
 
@@ -238,7 +280,8 @@ ausência de PDF/LLM/n8n/painel administrativo, inventários consolidados (68 la
   48). Idêntico ao Grupo A acima.
 - `REPORT_COMPOSER.md` §11: total de blocos de relatório = 50. Idêntico ao Grupo B
   acima.
-- `FINAL_SEQUENCE.md` §15: total de textos de tela = 23. Idêntico ao Grupo C acima.
+- `FINAL_SEQUENCE.md` §15: total de textos de tela = **24** (corrigido de 23 nesta
+  revisão — Tela 6 subcontada). Idêntico ao Grupo C acima.
 - Se o número de chaves de `q15` mudar (hoje 8, fechado — só o conteúdo das oito
   palavras é hipótese), os quatro documentos (`QUIZ_CONTENT.md`, `REPORT_COMPOSER.md`,
   `FINAL_SEQUENCE.md` não é afetado, este) precisam ser recalculados em conjunto.

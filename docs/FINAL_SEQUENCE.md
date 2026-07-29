@@ -267,12 +267,19 @@ Continuam sendo **dois** consentimentos versionados, nenhum pré-marcado (ver
 - **Conteúdo:** nome obrigatório; WhatsApp obrigatório **apenas** se a participante
   autorizar o contato. Dois consentimentos separados, **nenhum pré-marcado** — os
   textos são inventariados em `PRIVACY_RULES.md`, não aqui. Ver §4.1 para a mudança
-  de objeto do consentimento obrigatório. Além dos consentimentos:
-  `[PENDENTE · JERUSKA]` — 1 texto de mensagem de confiança. Total nesta tela, fora
-  os consentimentos: 1 texto.
+  de objeto do consentimento obrigatório. Textos desta tela contados no inventário
+  (ver `CONTENT_KIT.md` para a regra de contagem): `[PENDENTE · JERUSKA]` — 1 texto
+  de mensagem de confiança + 1 CTA de envio (sujeito à proibição abaixo). Total
+  nesta tela: **2 textos** — corrigido nesta revisão; a versão anterior contava só
+  a mensagem de confiança e deixava o CTA de fora, subcontando a tela.
+  Os rótulos dos campos "nome" e "WhatsApp" **não entram** neste total — são
+  rótulo de campo de formulário, `[PENDENTE · ALEXANDRE]`, listados à parte (ver
+  `CONTENT_KIT.md`).
 - **Comportamento:** formulário. Navegação para trás disponível **até** o submit (ver
   adendo 5.14). Após o submit, o fluxo é somente leitura.
-- **Proibido:** qualquer consentimento pré-marcado. CTA não usa a palavra "análise".
+- **Proibido:** qualquer consentimento pré-marcado. CTA não usa a palavra "análise"
+  — restrição explícita da especificação original, motivo pelo qual o CTA desta
+  tela entra obrigatoriamente no inventário de textos.
 
 ## 11. Tela 7 — Resultado completo (`/r/[token]`)
 
@@ -295,7 +302,9 @@ Continuam sendo **dois** consentimentos versionados, nenhum pré-marcado (ver
 
 - **Objetivo:** coletar nota de 1 a 5 e comentário opcional.
 - **Conteúdo:** `[PENDENTE · JERUSKA]` — 1 texto de pergunta de feedback. Total: 1
-  texto.
+  texto. Os rótulos do campo de nota (1–5) e do campo de comentário **não entram**
+  neste total — são rótulo de campo de formulário, `[PENDENTE · ALEXANDRE]`,
+  listados à parte (ver `CONTENT_KIT.md`).
 - **Comportamento:** interativa. Comentário opcional de até 500 caracteres. O
   feedback **nunca** altera o resultado já calculado e gravado.
 - **Proibido:** qualquer alteração retroativa do resultado a partir do feedback.
@@ -319,20 +328,50 @@ introduzir uma.
 
 ## 15. Inventário de textos de tela
 
+**Regra de contagem** (declarada e aplicada uniformemente — ver `CONTENT_KIT.md`
+para o texto de referência): conta como texto de tela todo texto exibido à
+participante que precise ser redigido, incluindo título, subtítulo, corpo, aviso,
+rótulo de opção e CTA. Não contam: os textos dos dois consentimentos (inventariados
+em `PRIVACY_RULES.md`) e rótulos de campo de formulário (listados à parte, §15.2).
+
 | Tela | Textos a escrever |
 |---|---|
-| 0. Entrada da experiência (nova) | 5 |
+| 0. Entrada da experiência | 5 |
 | 1. Processamento | 1 |
 | 2. Prévia do mapa | 4 (uma por mapa) |
-| 3. Intenção | 4 (1 pergunta + 3 labels) |
+| 3. Intenção | 4 (1 pergunta + 3 rótulos de opção) |
 | 4. Ponte para a terapia | 3 (1 cabeçalho + 2 colunas) |
-| 5. Mapa pronto | 2 (1 texto + 1 label de botão) |
-| 6. Captura e consentimentos | 1 (mensagem de confiança; consentimentos em `PRIVACY_RULES.md`) |
-| 7. Resultado completo | 2 (reconhecimento + nota de validade do link — nova) |
+| 5. Mapa pronto | 2 (1 texto + 1 CTA/label de botão) |
+| 6. Captura e consentimentos | **2** (1 mensagem de confiança + 1 CTA; consentimentos em `PRIVACY_RULES.md`) |
+| 7. Resultado completo | 2 (reconhecimento + nota de validade do link) |
 | 8. Feedback | 1 |
-| **Total** | **23** |
+| **Total** | **24** |
 
-Subiu de 17 (Fase 0) para 23: +5 pela Tela 0, +1 pela nota de validade do link na
-tela 7 (consequência da retenção fechada em `PRIVACY_RULES.md` §5). Este total não
-inclui os dois textos de consentimento (`PRIVACY_RULES.md`) nem os blocos do
-relatório (`REPORT_COMPOSER.md`). Ver `CONTENT_KIT.md` para o consolidado final.
+**Correção nesta revisão:** o total sobe de 23 para **24**. A Tela 6 estava
+subcontada em 1 — a versão anterior somava apenas a mensagem de confiança e
+deixava de fora o CTA de envio, apesar de a especificação original impor restrição
+explícita sobre esse CTA ("não usa a palavra 'análise'"), o que por si só já exigia
+que ele fosse um texto redigido e contado. Aplicando a regra de contagem acima de
+forma uniforme às nove telas, apenas a Tela 6 precisou de correção; as demais oito
+já seguiam a regra corretamente.
+
+Histórico: subiu de 17 (Fase 0) para 23 (Revisão 1: +5 pela Tela 0, +1 pela nota de
+validade do link na tela 7) e agora para 24 (esta correção: +1 pelo CTA da tela 6).
+
+Este total não inclui os dois textos de consentimento (`PRIVACY_RULES.md`) nem os
+rótulos de campo de formulário (§15.2) nem os blocos do relatório
+(`REPORT_COMPOSER.md`). Ver `CONTENT_KIT.md` para o consolidado final.
+
+### 15.1 Rótulos de campo de formulário — listados à parte, não somados
+
+`[PENDENTE · ALEXANDRE]`, cada um:
+
+| Tela | Campo |
+|---|---|
+| 6. Captura e consentimentos | Rótulo do campo "nome" |
+| 6. Captura e consentimentos | Rótulo do campo "WhatsApp" |
+| 8. Feedback | Rótulo do campo de nota (1–5) |
+| 8. Feedback | Rótulo do campo de comentário |
+
+Quatro rótulos. Não entram no total de 24 — são decisão de UI genérica, não
+conteúdo da Jeruska; ver `CONTENT_KIT.md` para o mesmo registro.

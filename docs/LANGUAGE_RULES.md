@@ -11,6 +11,9 @@
 > documento próprio hoje excluído, foram incorporadas em §4.4. Cobertura mínima
 > refinada por caminho `q12a`/`q12b` em §4.5. Demais validações reorganizadas em
 > §4.6–§4.8.
+>
+> **Correção pós-Fase-0:** validação de cardinalidade exata do par de eixo
+> acrescentada em §4.4.
 
 ---
 
@@ -117,6 +120,11 @@ Rodam sobre a configuração do quiz, antes de qualquer relatório existir:
 > `SCORING_MATRIX.md` §8–§11, e o arquivo separado foi
 > excluído. Nenhum conteúdo foi perdido na fusão.
 
+- **Cardinalidade exata do par de eixo** (acrescentada na correção pós-Fase-0):
+  cada um dos quatro mapas tem exatamente duas dimensões em `eixoDoMapa` — nem uma,
+  nem três, nem quatro. Roda sobre a tabela mapa→par (`SCORING_MATRIX.md` §8.1),
+  não sobre respostas. A garantia de não-vazio da dimensão complementar
+  (`SCORING_MATRIX.md` §10.1) depende matematicamente desta cardinalidade ser 2.
 - As duas dimensões de um mesmo mapa (`eixoDoMapa`) devem ser diferentes entre si.
   Falha a validação se um mapa tiver a mesma dimensão duas vezes.
 - Os quatro pares mapa→dimensões devem ser únicos entre si. Falha a validação se

@@ -12,6 +12,12 @@
 > (`q12a`/`q12b`), com noção de contribuição efetiva (§4); conteúdo do documento de
 > desempate de papéis narrativos incorporado aqui; esse arquivo foi excluído (a
 > Fase 0 volta a ter dez documentos).
+>
+> **Correção pós-Fase-0:** critério de seleção da dimensão complementar marcado
+> como `[PENDENTE · JERUSKA]` de ratificação (§10.2) — a regra vigente (§10) não
+> mudou. Validação nomeada de cardinalidade exata do par de eixo acrescentada
+> (§8.1), da qual a garantia de não-vazio da complementar depende matematicamente
+> (§10.1, generalização por `k`).
 
 ---
 
@@ -202,6 +208,10 @@ escolhe os pares.
 
 **Restrições estruturais sobre esta tabela** (validação falha se violadas):
 
+- **Cardinalidade exata do par** — validação nomeada, acrescentada nesta correção:
+  cada um dos quatro mapas tem **exatamente duas** dimensões em seu par de eixo.
+  Nem uma, nem três, nem quatro. A validação roda sobre a tabela mapa→par (§8.1),
+  não sobre respostas de participantes, e falha o build antes de qualquer cálculo.
 - As duas dimensões de um mesmo mapa devem ser **diferentes** entre si.
 - Os **quatro pares devem ser únicos** — nenhum par pode se repetir entre mapas
   (mesmo com as duas dimensões trocadas de posição).
@@ -308,6 +318,69 @@ elementos; no melhor caso (força e atenção fora de `eixoDoMapa` e distintas e
 si), tem 4. Como há seis dimensões ao todo, sempre sobram **entre 2 e 4**
 candidatas — nunca zero. A dimensão complementar sempre resolve.
 
+**Esta prova depende da cardinalidade do par de eixo ser exatamente 2, e só vale
+para esse caso.** Generalizando para um par de tamanho `k`: o conjunto excluído tem
+entre `k` (pior caso, força e atenção ambas dentro do par) e `k + 2` elementos
+(melhor caso), e sobram entre `6 − (k + 2)` e `6 − k` candidatas. No pior caso,
+sobram `6 − (k + 2)` = `4 − k` candidatas. Com `k = 2` (o caso fechado nesta
+especificação), o pior caso é `4 − 2 = 2` — nunca zero, como demonstrado acima. Mas
+com `k = 4`, o pior caso seria `4 − 4 = 0` — **conjunto vazio**, e a dimensão
+complementar não teria candidata nenhuma. A prova de não-vazio só é válida com
+`k = 2`; é exatamente por isso que a validação de cardinalidade exata do §8.1 não é
+apenas uma checagem de forma — é uma pré-condição matemática desta garantia.
+
+### 10.2 Critério de seleção — aguarda ratificação (`[PENDENTE · JERUSKA]`)
+
+A regra vigente (§10, corpo principal) continua em operação: **não foi alterada**.
+Esta subseção registra que o critério em si — qual das candidatas vira a dimensão
+complementar — ainda não foi ratificado pela Jeruska, e documenta o que está em
+jogo, sem propor conteúdo psicológico.
+
+**O que o critério vigente produz, estruturalmente:** com a regra atual (maior
+`necessidade` entre as candidatas, isto é, menor `normalizado`), o relatório traz
+um bloco derivado do maior score (força) e **dois** blocos derivados do extremo
+baixo (ponto de atenção e dimensão complementar). Essa proporção é estrutural — a
+redação de cada bloco pode alterar o tom, não o peso: por mais que a família 5
+(dimensão complementar) seja escrita com um registro diferente da família 4 (ponto
+de atenção), as duas continuam sendo, matematicamente, leituras do que pontuou
+baixo.
+
+**Isso interage com três decisões já fechadas:**
+
+- Os quatro mapas são laterais, não hierárquicos (seção 5.5 da especificação
+  original) — nenhuma leitura do relatório pode sugerir gravidade ou escala.
+- A coluna "refletir no seu tempo" da tela 4 é um caminho legítimo, não um déficit
+  (`FINAL_SEQUENCE.md` §8).
+- A tela 7 abre com reconhecimento, não com constatação de falta
+  (`FINAL_SEQUENCE.md` §11).
+
+Um relatório estruturalmente inclinado para dois blocos de "carência" contra um de
+"presença" não contradiz essas três decisões por si só — mas é a interação que a
+Jeruska precisa avaliar ao ratificar o critério, porque é ela quem decide se o tom
+consegue absorver essa proporção sem que o conjunto passe a mensagem oposta ao que
+as três decisões pedem.
+
+**Duas opções, com a consequência de cada uma:**
+
+- **Opção 1 (vigente)** — complementar = maior `necessidade` entre as candidatas
+  (= menor `normalizado`). Proporção: **1 presença para 2 carências** (força é
+  presença; atenção e complementar são carências).
+- **Opção 2** — complementar = maior `normalizado` entre as candidatas (em vez de
+  maior `necessidade`). Proporção: **2 presenças para 1 carência** (força e
+  complementar seriam presenças; só atenção seria carência). Exige que a redação da
+  família 5 (dimensão complementar) se diferencie deliberadamente da família 3
+  (força predominante) para as duas não caírem no mesmo registro de "isso também é
+  um ponto forte" repetido.
+
+**Não escolhi entre as duas.** A regra vigente (Opção 1) permanece ativa em todo o
+restante deste documento.
+
+**Impacto no motor da Fase 2:** o motor pode ser implementado com a Opção 1 desde
+já. Trocar para a Opção 2, se a Jeruska ratificar essa escolha, é alteração de uma
+única função de seleção (o critério de ordenação das candidatas em §10) — sem
+impacto em inventário, orçamento de palavras ou número de blocos. Ver
+`CONTENT_KIT.md` §8, Grupo A, para o registro desta pendência na fila.
+
 ## 11. Ordem de resolução, determinística — resumo
 
 1. **Força** — maior `normalizado` (§9.A).
@@ -362,6 +435,9 @@ nenhuma tela.
 - Mapa calculado corretamente pelos quatro pares.
 - Configuração com par inválido (duas dimensões iguais no mesmo mapa) — deve falhar
   a validação, não o cálculo em produção.
+- Tabela mapa→par com cardinalidade inválida (um mapa com uma, três ou quatro
+  dimensões em vez de duas) — deve falhar a validação antes de qualquer cálculo,
+  não silenciosamente aceitar e produzir um `mapScore` incorreto.
 - Dois mapas com o mesmo par — deve falhar a validação.
 - Empate de `mapScore` entre dois ou mais mapas.
 - Desempate resolvido pelo menor valor mínimo do par (passo 2 do §8.3).
