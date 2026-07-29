@@ -13,8 +13,6 @@ import { CaptureScreen, type CaptureData } from "@/components/quiz/CaptureScreen
 import { ReportScreen } from "@/components/quiz/ReportScreen";
 import { FeedbackScreen } from "@/components/quiz/FeedbackScreen";
 import {
-  DEMO_DIMENSOES,
-  DEMO_MAPA_PRINCIPAL,
   DEMO_Q01,
   DEMO_Q12A,
   DEMO_Q12B,
@@ -23,7 +21,9 @@ import {
   DEMO_TOTAL_PERGUNTAS,
   type DemoQuestion,
 } from "@/config/quiz/v1/homologacao/demo-questions";
-import { construirEcosHomologacao } from "@/config/quiz/v1/homologacao/report-homologacao";
+import { calcularResultado } from "@/config/quiz/mvp/engine";
+import { selecionarEcos } from "@/config/quiz/mvp/ecos";
+import { nomeMapa } from "@/config/quiz/mvp/report-content";
 
 const TODAS_PERGUNTAS: DemoQuestion[] = [
   DEMO_Q01,
@@ -32,6 +32,19 @@ const TODAS_PERGUNTAS: DemoQuestion[] = [
   DEMO_Q12B,
   ...DEMO_QUESTIONS_FIM,
 ];
+
+const PERGUNTAS_PONTUAVEIS = DEMO_QUESTIONS_FIM.filter((q) => q.id !== "q15");
+
+/** Ids das perguntas efetivamente pontuadas num percurso (exclui q15 —
+ * docs/SCORING_MATRIX.md §5) já com a variante de q12 resolvida. */
+function idsPerguntasPontuaveis(respostas: Record<string, string>): string[] {
+  return [
+    DEMO_Q01.id,
+    ...DEMO_QUESTIONS_MEIO.map((q) => q.id),
+    resolveQuestionAt(11, respostas).id,
+    ...PERGUNTAS_PONTUAVEIS.map((q) => q.id),
+  ];
+}
 
 const ULTIMO_INDICE_PERGUNTA = DEMO_TOTAL_PERGUNTAS - 1; // 0-14
 const INDICE_Q12 = 11; // 12ª pergunta (q01=0 ... q11=10, q12=11, q13..q15=12-14)
@@ -152,10 +165,12 @@ export function QuizFlow() {
     }
     case "processing":
       return shell(<ProcessingScreen onDone={goNext} />);
-    case "map-preview":
+    case "map-preview": {
+      const scorePreview = calcularResultado(respostas, idsPerguntasPontuaveis(respostas));
       return shell(
-        <MapPreviewScreen mapa={DEMO_MAPA_PRINCIPAL} onContinue={goNext} />,
+        <MapPreviewScreen mapa={nomeMapa(scorePreview.mapaPrincipal)} onContinue={goNext} />,
       );
+    }
     case "intention":
       return shell(
         <IntentionScreen
@@ -177,17 +192,23 @@ export function QuizFlow() {
     case "result": {
       const opcaoQ01 = DEMO_Q01.opcoes.find((o) => o.id === respostas[DEMO_Q01.id]);
       const contextoMoradia = opcaoQ01?.perfilMoradia ?? "acompanhada";
-      const ecos = construirEcosHomologacao(respostas, TODAS_PERGUNTAS);
+      const score = calcularResultado(respostas, idsPerguntasPontuaveis(respostas));
+      const ecos = selecionarEcos(respostas, TODAS_PERGUNTAS, [
+        ...score.eixoDoMapa,
+        score.forcaPredominante,
+        score.dimensaoComplementar,
+      ]);
+      const q15 = DEMO_QUESTIONS_FIM.find((q) => q.id === "q15");
+      const q15Label = q15?.opcoes.find((o) => o.id === respostas["q15"])?.label;
       return (
         <QuizShell wide>
           <ReportScreen
             nome={captura?.nome ?? ""}
-            mapa={DEMO_MAPA_PRINCIPAL}
-            forca={DEMO_DIMENSOES.forca}
-            atencao={DEMO_DIMENSOES.atencao}
-            complementar={DEMO_DIMENSOES.complementar}
+            mapaId={score.mapaPrincipal}
+            score={score}
             contextoMoradia={contextoMoradia}
             ecos={ecos}
+            q15Label={q15Label}
             intencao={intencao}
             onContinue={goNext}
           />

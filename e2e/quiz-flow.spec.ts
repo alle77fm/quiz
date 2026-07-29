@@ -6,6 +6,32 @@ import {
   DEMO_QUESTIONS_FIM,
   DEMO_QUESTIONS_MEIO,
 } from "@/config/quiz/v1/homologacao/demo-questions";
+import { calcularResultado } from "@/config/quiz/mvp/engine";
+import { nomeMapa, TEXTO_AVISO_ESCOPO } from "@/config/quiz/mvp/report-content";
+import { DIMENSAO_LABEL } from "@/config/quiz/mvp/dimensions";
+
+/** Respostas de "primeira opção em tudo" — o mesmo caminho exercitado
+ * por completeAllQuestions(page, 15). Calculado via o motor real, não
+ * hardcoded, para o teste continuar correto se os pesos mudarem. */
+const RESPOSTAS_PRIMEIRA_OPCAO: Record<string, string> = {
+  [DEMO_Q01.id]: DEMO_Q01.opcoes[0].id,
+  ...Object.fromEntries(DEMO_QUESTIONS_MEIO.map((q) => [q.id, q.opcoes[0].id])),
+  [DEMO_Q12A.id]: DEMO_Q12A.opcoes[0].id,
+  ...Object.fromEntries(
+    DEMO_QUESTIONS_FIM.filter((q) => q.id !== "q15").map((q) => [q.id, q.opcoes[0].id]),
+  ),
+};
+const IDS_PONTUAVEIS_PRIMEIRA_OPCAO = [
+  DEMO_Q01.id,
+  ...DEMO_QUESTIONS_MEIO.map((q) => q.id),
+  DEMO_Q12A.id,
+  ...DEMO_QUESTIONS_FIM.filter((q) => q.id !== "q15").map((q) => q.id),
+];
+const SCORE_PRIMEIRA_OPCAO = calcularResultado(
+  RESPOSTAS_PRIMEIRA_OPCAO,
+  IDS_PONTUAVEIS_PRIMEIRA_OPCAO,
+);
+const MAPA_PRIMEIRA_OPCAO = nomeMapa(SCORE_PRIMEIRA_OPCAO.mapaPrincipal);
 
 const RESOLUTIONS = [
   { name: "360x800", width: 360, height: 800 },
@@ -96,7 +122,7 @@ test.describe("Fluxo do quiz — navegação, responsividade e capturas", () => 
     // processamento (auto-avança) → prévia do mapa → intenção → ponte → mapa pronto → captura
     await expect(page.getByText("Preparando o seu mapa")).toBeVisible();
     await page.getByRole("button", { name: "Continuar" }).click(); // sai do processamento
-    await expect(page.getByText("Casa-Refúgio")).toBeVisible();
+    await expect(page.getByText(MAPA_PRIMEIRA_OPCAO)).toBeVisible();
     await page.getByRole("button", { name: "Continuar" }).click(); // sai da prévia do mapa
     await page.getByRole("radio").first().click(); // intenção
     await page.getByText("Conversar com a Jeruska").click(); // ponte
@@ -119,7 +145,7 @@ test.describe("Fluxo do quiz — navegação, responsividade e capturas", () => 
     await page.getByRole("button", { name: "Ver meu resultado" }).click();
 
     await expect(
-      page.getByText(/Maria Teste, este é o espaço reservado/),
+      page.getByText(/Maria Teste, este é o seu mapa/),
     ).toBeVisible();
 
     // resultado → feedback: fluxo completo até a última tela
@@ -180,7 +206,7 @@ test.describe("Fluxo do quiz — navegação, responsividade e capturas", () => 
         .check();
       await page.getByRole("button", { name: "Ver meu resultado" }).click();
       await expect(
-      page.getByText(/Maria Teste, este é o espaço reservado/),
+      page.getByText(/Maria Teste, este é o seu mapa/),
     ).toBeVisible();
       await page.screenshot({
         path: `.screenshots/flow-06-resultado-${viewport.name}.png`,
@@ -293,6 +319,142 @@ async function chegarAoRelatorio(
   await page.getByRole("button", { name: "Ver meu resultado" }).click();
 }
 
+/** Mesmos quatro percursos de src/config/quiz/mvp/engine.test.ts — um
+ * por mapa alcançável. Duplicados aqui (ids, não labels) para dirigir o
+ * navegador sem importar um arquivo de teste como módulo. */
+const PERCURSOS_POR_MAPA: Record<string, Record<string, string>> = {
+  "casa-refugio": {
+    q01: "so",
+    q02: "indiferenca",
+    q03: "quase-nunca",
+    q04: "quase-nunca",
+    q05: "muito-a-vontade",
+    q06: "conversam",
+    q07: "sempre",
+    q08: "sempre",
+    q09: "silencio",
+    q10: "quase-nunca",
+    q11: "quase-nunca",
+    q12a: "muito-proxima",
+    q13: "quase-nunca",
+    q14: "assunto",
+  },
+  "casa-de-reencontro": {
+    q01: "so",
+    q02: "indiferenca",
+    q03: "sempre",
+    q04: "quase-nunca",
+    q05: "frequentemente-desconfortavel",
+    q06: "conversam",
+    q07: "quase-nunca",
+    q08: "quase-nunca",
+    q09: "silencio",
+    q10: "quase-nunca",
+    q11: "sempre",
+    q12a: "muito-distante",
+    q13: "sempre",
+    q14: "nenhum",
+  },
+  "casa-dos-vinculos": {
+    q01: "so",
+    q02: "alivio",
+    q03: "sempre",
+    q04: "quase-nunca",
+    q05: "frequentemente-desconfortavel",
+    q06: "sozinho",
+    q07: "quase-nunca",
+    q08: "quase-nunca",
+    q09: "silencio",
+    q10: "sempre",
+    q11: "sempre",
+    q12a: "muito-distante",
+    q13: "sempre",
+    q14: "nenhum",
+  },
+  "casa-em-renovacao": {
+    q01: "parceiro",
+    q02: "alivio",
+    q03: "sempre",
+    q04: "sempre",
+    q05: "muito-a-vontade",
+    q06: "sozinho",
+    q07: "quase-nunca",
+    q08: "quase-nunca",
+    q09: "tempo",
+    q10: "sempre",
+    q11: "sempre",
+    q12a: "muito-distante",
+    q13: "quase-nunca",
+    q14: "assunto",
+  },
+};
+
+function labelPara(questao: { opcoes: { id: string; label: string }[] }, id: string): string {
+  return questao.opcoes.find((o) => o.id === id)!.label;
+}
+
+/** Percorre as 15 perguntas seguindo um mapa id→opção específico (não
+ * "primeira opção"), até a tela de processamento. */
+async function responderPercurso(page: Page, respostas: Record<string, string>) {
+  await page.goto("/quiz");
+  await answerByLabel(page, labelPara(DEMO_Q01, respostas.q01));
+  for (const questao of DEMO_QUESTIONS_MEIO) {
+    await answerByLabel(page, labelPara(questao, respostas[questao.id]));
+  }
+  const q12 = respostas.q01 === "so" ? DEMO_Q12A : DEMO_Q12B;
+  const idQ12 = respostas.q01 === "so" ? "q12a" : "q12b";
+  await answerByLabel(page, labelPara(q12, respostas[idQ12] ?? respostas.q12a));
+  const q13 = DEMO_QUESTIONS_FIM.find((q) => q.id === "q13")!;
+  const q14 = DEMO_QUESTIONS_FIM.find((q) => q.id === "q14")!;
+  const q15 = DEMO_QUESTIONS_FIM.find((q) => q.id === "q15")!;
+  await answerByLabel(page, labelPara(q13, respostas.q13));
+  await answerByLabel(page, labelPara(q14, respostas.q14));
+  await answerByLabel(page, q15.opcoes[0].label); // q15 não pontua
+}
+
+test.describe("Variação real do resultado — os quatro mapas", () => {
+  for (const mapaId of Object.keys(PERCURSOS_POR_MAPA)) {
+    test(`percurso "${mapaId}" chega ao mapa correspondente, e prévia e relatório coincidem`, async ({
+      page,
+    }) => {
+      const nomeEsperado = nomeMapa(mapaId as Parameters<typeof nomeMapa>[0]);
+      await responderPercurso(page, PERCURSOS_POR_MAPA[mapaId]);
+
+      await expect(page.getByText("Preparando o seu mapa")).toBeVisible();
+      await page.getByRole("button", { name: "Continuar" }).click();
+      await expect(page.getByText(nomeEsperado)).toBeVisible(); // prévia
+      await page.getByRole("button", { name: "Continuar" }).click();
+      await page.getByRole("radio").first().click();
+      await page.getByText("Conversar com a Jeruska").click();
+      await page.getByRole("button", { name: "Continuar" }).click();
+      await page.getByLabel("Nome").fill("Teste Variação");
+      await page
+        .getByRole("checkbox", { name: /Autorizo o armazenamento/ })
+        .check();
+      await page.getByRole("button", { name: "Ver meu resultado" }).click();
+
+      await expect(
+        page.getByText(`Seu mapa — ${nomeEsperado}`),
+      ).toBeVisible(); // relatório — prévia e relatório coincidem
+    });
+  }
+
+  test("os quatro percursos produzem quatro mapas diferentes entre si", async ({
+    page,
+  }) => {
+    const mapasEncontrados = new Set<string>();
+    for (const [mapaId, respostas] of Object.entries(PERCURSOS_POR_MAPA)) {
+      await responderPercurso(page, respostas);
+      await expect(page.getByText("Preparando o seu mapa")).toBeVisible();
+      await page.getByRole("button", { name: "Continuar" }).click();
+      const nomeEsperado = nomeMapa(mapaId as Parameters<typeof nomeMapa>[0]);
+      await expect(page.getByText(nomeEsperado)).toBeVisible();
+      mapasEncontrados.add(nomeEsperado);
+    }
+    expect(mapasEncontrados.size).toBe(4);
+  });
+});
+
 /** Padrões de flexão de gênero fixa dirigidos à participante — não
  * confundir com palavras legítimas referindo-se a objetos/espaços. */
 const PADROES_GENERO_FIXO =
@@ -305,13 +467,14 @@ test.describe("Relatório de homologação — estrutura completa", () => {
     await chegarAoRelatorio(page);
 
     const eyebrows = [
-      "Seu mapa — Casa-Refúgio",
-      "Força predominante — Acolhimento",
-      "Ponto de atenção — Movimento",
-      "Dimensão complementar — Vínculos",
+      `Seu mapa — ${MAPA_PRIMEIRA_OPCAO}`,
+      `Força predominante — ${DIMENSAO_LABEL[SCORE_PRIMEIRA_OPCAO.forcaPredominante]}`,
+      `Ponto de atenção — ${DIMENSAO_LABEL[SCORE_PRIMEIRA_OPCAO.pontoDeAtencao]}`,
+      `Dimensão complementar — ${DIMENSAO_LABEL[SCORE_PRIMEIRA_OPCAO.dimensaoComplementar]}`,
       "Contexto de moradia",
       "Como aparece na rotina",
       "Direção e encerramento",
+      "Uma pergunta para levar com você",
       "Convite",
       "Aviso de escopo",
     ];
@@ -333,17 +496,14 @@ test.describe("Relatório de homologação — estrutura completa", () => {
     expect(scrollHeight).toBeGreaterThan(clientHeight);
   });
 
-  test("relatório não se apresenta como cálculo oficial definitivo", async ({
+  test("relatório não afirma diagnóstico e traz o aviso de escopo", async ({
     page,
   }) => {
     await chegarAoRelatorio(page);
 
     const texto = (await page.locator("body").innerText()).toLowerCase();
-    expect(texto).not.toMatch(
-      /demonstrat|homologa|placeholder|provis[oó]rio|pendente/,
-    );
-    // nota de transparência precisa existir em algum lugar da página
-    expect(texto).toMatch(/estrutura que receberá seu relatório personalizado/);
+    expect(texto).not.toMatch(/placeholder|provis[oó]rio|pendente/);
+    expect(texto).toMatch(TEXTO_AVISO_ESCOPO.toLowerCase());
   });
 });
 
@@ -354,7 +514,7 @@ test.describe("Linguagem neutra de gênero — participante", () => {
     await chegarAoRelatorio(page, "Alexandre", "Estou disponível para conversar");
 
     await expect(
-      page.getByText(/Alexandre, este é o espaço reservado/),
+      page.getByText(/Alexandre, este é o seu mapa/),
     ).toBeVisible();
     await expect(
       page.getByText("Você chega até aqui com abertura para conversar."),
@@ -382,7 +542,7 @@ test.describe("Linguagem neutra de gênero — participante", () => {
     }) => {
       await chegarAoRelatorio(page, nome, intencaoLabel);
       await expect(
-        page.getByText(new RegExp(`${nome}, este é o espaço reservado`)),
+        page.getByText(new RegExp(`${nome}, este é o seu mapa`)),
       ).toBeVisible();
 
       const texto = await page.locator("body").innerText();
@@ -440,7 +600,7 @@ test.describe("Screenshots de auditoria — q05, q14 e relatório", () => {
       .check();
     await page.getByRole("button", { name: "Ver meu resultado" }).click();
     await expect(
-      page.getByText(/Maria Teste, este é o espaço reservado/),
+      page.getByText(/Maria Teste, este é o seu mapa/),
     ).toBeVisible();
     await page.screenshot({
       path: ".screenshots/audit-resultado-mobile.png",
@@ -453,6 +613,54 @@ test.describe("Screenshots de auditoria — q05, q14 e relatório", () => {
       fullPage: true,
     });
   });
+});
+
+test.describe("Screenshots de auditoria — os quatro mapas e o CTA por intenção", () => {
+  for (const [mapaId, respostas] of Object.entries(PERCURSOS_POR_MAPA)) {
+    for (const viewport of SNAPSHOT_VIEWPORTS) {
+      test(`prévia e relatório — ${mapaId} (${viewport.name})`, async ({
+        page,
+      }) => {
+        await page.setViewportSize(viewport);
+        await responderPercurso(page, respostas);
+        await expect(page.getByText("Preparando o seu mapa")).toBeVisible();
+        await page.getByRole("button", { name: "Continuar" }).click();
+        await page.screenshot({
+          path: `.screenshots/mapa-${mapaId}-previa-${viewport.name}.png`,
+        });
+
+        await page.getByRole("button", { name: "Continuar" }).click();
+        await page.getByRole("radio").first().click();
+        await page.getByText("Conversar com a Jeruska").click();
+        await page.getByRole("button", { name: "Continuar" }).click();
+        await page.getByLabel("Nome").fill("Teste Variação");
+        await page
+          .getByRole("checkbox", { name: /Autorizo o armazenamento/ })
+          .check();
+        await page.getByRole("button", { name: "Ver meu resultado" }).click();
+        await page.screenshot({
+          path: `.screenshots/mapa-${mapaId}-relatorio-${viewport.name}.png`,
+          fullPage: true,
+        });
+      });
+    }
+  }
+
+  for (const intencaoLabel of [
+    "Estou apenas explorando",
+    "Estou considerando terapia",
+    "Estou disponível para conversar",
+  ]) {
+    test(`CTA do convite — "${intencaoLabel}"`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await chegarAoRelatorio(page, "Teste CTA", intencaoLabel);
+      const slug = intencaoLabel.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+      await page.screenshot({
+        path: `.screenshots/cta-convite-${slug}.png`,
+        fullPage: true,
+      });
+    });
+  }
 });
 
 test.describe("Isolamento de dados — sem rede, sem persistência", () => {
@@ -486,7 +694,7 @@ test.describe("Isolamento de dados — sem rede, sem persistência", () => {
       .check();
     await page.getByRole("button", { name: "Ver meu resultado" }).click();
     await expect(
-      page.getByText(/Maria Teste, este é o espaço reservado/),
+      page.getByText(/Maria Teste, este é o seu mapa/),
     ).toBeVisible();
 
     expect(requisicoesForaDaOrigem).toEqual([]);
@@ -510,7 +718,7 @@ test.describe("Isolamento de dados — sem rede, sem persistência", () => {
       .check();
     await page.getByRole("button", { name: "Ver meu resultado" }).click();
     await expect(
-      page.getByText(/Maria Teste, este é o espaço reservado/),
+      page.getByText(/Maria Teste, este é o seu mapa/),
     ).toBeVisible();
 
     const estadoAntes = await page.evaluate(() => ({

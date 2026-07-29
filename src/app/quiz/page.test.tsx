@@ -9,6 +9,31 @@ import {
   DEMO_QUESTIONS_MEIO,
   DEMO_TOTAL_PERGUNTAS,
 } from "@/config/quiz/v1/homologacao/demo-questions";
+import { calcularResultado } from "@/config/quiz/mvp/engine";
+import { nomeMapa } from "@/config/quiz/mvp/report-content";
+
+/** Respostas de "primeira opção em tudo" — o mesmo caminho exercitado
+ * pelos testes de fluxo completo abaixo. Calculado via o motor real
+ * (não hardcoded) para o teste continuar correto se os pesos mudarem. */
+const RESPOSTAS_PRIMEIRA_OPCAO: Record<string, string> = {
+  [DEMO_Q01.id]: DEMO_Q01.opcoes[0].id,
+  ...Object.fromEntries(DEMO_QUESTIONS_MEIO.map((q) => [q.id, q.opcoes[0].id])),
+  [DEMO_Q12A.id]: DEMO_Q12A.opcoes[0].id,
+  ...Object.fromEntries(
+    DEMO_QUESTIONS_FIM.filter((q) => q.id !== "q15").map((q) => [q.id, q.opcoes[0].id]),
+  ),
+};
+const IDS_PONTUAVEIS_PRIMEIRA_OPCAO = [
+  DEMO_Q01.id,
+  ...DEMO_QUESTIONS_MEIO.map((q) => q.id),
+  DEMO_Q12A.id,
+  ...DEMO_QUESTIONS_FIM.filter((q) => q.id !== "q15").map((q) => q.id),
+];
+const SCORE_PRIMEIRA_OPCAO = calcularResultado(
+  RESPOSTAS_PRIMEIRA_OPCAO,
+  IDS_PONTUAVEIS_PRIMEIRA_OPCAO,
+);
+const MAPA_PRIMEIRA_OPCAO = nomeMapa(SCORE_PRIMEIRA_OPCAO.mapaPrincipal);
 
 const pushMock = vi.fn();
 
@@ -232,7 +257,7 @@ describe("Linguagem neutra de gênero — participante", () => {
       await screen.findByText("Preparando o seu mapa…");
       textoSemFlexaoDeGenero();
       fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
-      await screen.findByText("Casa-Refúgio");
+      await screen.findByText(MAPA_PRIMEIRA_OPCAO);
       textoSemFlexaoDeGenero();
       fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
 
@@ -265,7 +290,7 @@ describe("Linguagem neutra de gênero — participante", () => {
       fireEvent.click(screen.getByRole("button", { name: "Ver meu resultado" }));
 
       // relatório
-      await screen.findByText(new RegExp(`${nome}, este é o espaço reservado`));
+      await screen.findByText(new RegExp(`${nome}, este é o seu mapa`));
       textoSemFlexaoDeGenero();
       if (intencaoLabel === "Estou disponível para conversar") {
         expect(document.body.textContent).toMatch(

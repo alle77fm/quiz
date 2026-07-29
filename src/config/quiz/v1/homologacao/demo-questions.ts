@@ -11,11 +11,13 @@
  * foram inventados aqui. Os enunciados de q12a/q12b também refletem a
  * pergunta aprovada, apenas ajustados ao contexto de cada variante.
  *
- * As ALTERNATIVAS abaixo são estrutura de homologação, não conteúdo
- * final: não têm peso, não pontuam para nenhuma dimensão, e não devem
- * ser tratadas como redação da psicóloga. Serão substituídas
- * integralmente pela matriz oficial (docs/SCORING_MATRIX.md,
- * docs/QUIZ_CONTENT.md) antes do lançamento.
+ * As ALTERNATIVAS abaixo (labels) são estrutura de homologação, não
+ * conteúdo final da psicóloga — serão substituídas integralmente pela
+ * matriz oficial (docs/SCORING_MATRIX.md, docs/QUIZ_CONTENT.md) antes
+ * do lançamento. Os PESOS que cada alternativa carrega para o motor de
+ * demonstração comercial vivem à parte, em
+ * `src/config/quiz/mvp/weights.ts` — este arquivo aqui nunca declara
+ * peso, só navegação (id, texto, cômodo, label).
  *
  * Nenhum destes textos deve aparecer marcado como aprovado em nenhum
  * outro lugar do código.
@@ -205,13 +207,3 @@ export const DEMO_QUESTIONS_FIM: DemoQuestion[] = [
 ];
 
 export const DEMO_TOTAL_PERGUNTAS = 15;
-
-/** Nomes de mapa já fechados em docs/SCORING_MATRIX.md §1 — apenas o
- * identificador estrutural, sem descrição de conteúdo. */
-export const DEMO_MAPA_PRINCIPAL = "Casa-Refúgio";
-
-export const DEMO_DIMENSOES = {
-  forca: "Acolhimento",
-  atencao: "Movimento",
-  complementar: "Vínculos",
-} as const;
