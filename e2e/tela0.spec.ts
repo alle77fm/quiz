@@ -1,12 +1,13 @@
 import { test, expect } from "@playwright/test";
 
 const VIEWPORTS = [
-  { name: "mobile-390x844", width: 390, height: 844 },
   { name: "mobile-360x800", width: 360, height: 800 },
+  { name: "mobile-390x844", width: 390, height: 844 },
   { name: "desktop-1440x900", width: 1440, height: 900 },
+  { name: "desktop-1920x1080", width: 1920, height: 1080 },
 ] as const;
 
-test.describe("Tela 0 — verificação visual e de console", () => {
+test.describe("Tela 0 — verificação visual e de console (redesign dark/gold)", () => {
   for (const viewport of VIEWPORTS) {
     test(`sem rolagem horizontal e sem erro de console em ${viewport.name}`, async ({
       page,
@@ -34,25 +35,66 @@ test.describe("Tela 0 — verificação visual e de console", () => {
 
       await page.screenshot({
         path: `.screenshots/tela0-${viewport.name}.png`,
-        fullPage: true,
+        fullPage: false,
       });
     });
   }
 
-  test("primeira dobra em 390x844 mostra marca, título, subtítulo, 15 perguntas e CTA", async ({
+  test("conteúdo essencial visível: headline, 15 perguntas e CTA", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
 
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByText("15 perguntas")).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Entrar na experiência" }),
+    ).toBeVisible();
+  });
+
+  test("CTA precede a headline e aparece na primeira dobra mobile", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await page.goto("/");
+
+    const cta = page.getByRole("link", { name: "Entrar na experiência" });
+    const headline = page.getByRole("heading", { level: 1 });
+    const [ctaBox, headlineBox] = await Promise.all([
+      cta.boundingBox(),
+      headline.boundingBox(),
+    ]);
+
+    expect(ctaBox).not.toBeNull();
+    expect(headlineBox).not.toBeNull();
+    expect(ctaBox!.y + ctaBox!.height).toBeLessThanOrEqual(800);
+    expect(ctaBox!.y).toBeLessThan(headlineBox!.y);
+  });
+
+  test("CTA exibe foco visível por teclado", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await page.keyboard.press("Tab");
+
+    const cta = page.getByRole("link", { name: "Entrar na experiência" });
+    await expect(cta).toBeFocused();
+    await expect(cta).toHaveCSS("outline-style", "solid");
+  });
+
+  test("primeira dobra em 1440x900 mostra marca, headline e CTA sem rolar", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+
     const cta = page.getByRole("link", { name: "Entrar na experiência" });
     const box = await cta.boundingBox();
     expect(box).not.toBeNull();
-    expect(box!.y + box!.height).toBeLessThanOrEqual(844);
+    expect(box!.y + box!.height).toBeLessThanOrEqual(900);
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page.getByText("Um percurso de quinze perguntas")).toBeVisible();
-    await expect(page.getByText("15 perguntas")).toBeVisible();
+    await expect(page.locator("main").getByText("Casa com Alma")).toBeVisible();
   });
 
   test("CTA navega para /quiz sem chamada de rede nem storage", async ({

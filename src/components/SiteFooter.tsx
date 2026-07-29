@@ -1,6 +1,6 @@
 export function SiteFooter() {
   return (
-    <footer className="pb-8 pt-6 text-center text-xs tracking-wide text-ink-soft">
+    <footer className="relative z-10 pb-6 pt-4 text-center text-xs tracking-wide text-muted sm:pb-8">
       Casa com Alma
     </footer>
   );

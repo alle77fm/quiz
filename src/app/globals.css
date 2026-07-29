@@ -1,23 +1,25 @@
 @import "tailwindcss";
 
 /*
-  Paleta derivada de LogoPrincipal.png (lótus dourado) e id_visual.png
-  (fundo escuro quente, dourado metálico, creme).
-  Não reproduz foto, nome ou registro profissional presentes em
-  id_visual.png — apenas cor, tipografia e registro visual.
+  Redesign dark/gold — paleta extraída das referências em img/ (casa
+  noturna, porta entreaberta, luz âmbar) e da identidade existente
+  (LogoPrincipal.png). Não reproduz nenhum conteúdo da id_visual.png
+  (foto, nome ou registro profissional).
 */
 :root {
-  --color-ink: #1c150e;
-  --color-ink-soft: #2a2018;
-  --color-canvas: #f8f2e7;
-  --color-canvas-soft: #efe6d3;
-  --color-gold: #c9a24b;
-  --color-gold-deep: #8f6f2e;
-  --color-gold-soft: #e6d3a0;
-  --color-cream: #f6efe1;
+  --color-ink: #0b0a08;
+  --color-ink-soft: #15120f;
+  --color-ink-warm: #211910;
+  --color-gold: #c89645;
+  --color-amber: #d7a654;
+  --color-bronze: #775522;
+  --color-cream: #f2e8d8;
+  --color-muted: #c9bfae;
+  --color-olive: #6f7554;
+  --color-olive-deep: #565a41;
 
-  --background: var(--color-canvas);
-  --foreground: var(--color-ink);
+  --background: var(--color-ink);
+  --foreground: var(--color-cream);
 }
 
 @theme inline {
@@ -25,20 +27,22 @@
   --color-foreground: var(--foreground);
   --color-ink: var(--color-ink);
   --color-ink-soft: var(--color-ink-soft);
-  --color-canvas: var(--color-canvas);
-  --color-canvas-soft: var(--color-canvas-soft);
+  --color-ink-warm: var(--color-ink-warm);
   --color-gold: var(--color-gold);
-  --color-gold-deep: var(--color-gold-deep);
-  --color-gold-soft: var(--color-gold-soft);
+  --color-amber: var(--color-amber);
+  --color-bronze: var(--color-bronze);
   --color-cream: var(--color-cream);
-  --font-display: var(--font-playfair);
+  --color-muted: var(--color-muted);
+  --color-olive: var(--color-olive);
+  --color-olive-deep: var(--color-olive-deep);
+  --font-display: var(--font-inter);
   --font-body: var(--font-inter);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {

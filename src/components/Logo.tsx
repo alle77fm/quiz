@@ -1,14 +1,18 @@
 import Image from "next/image";
 
-export function Logo() {
+type LogoProps = {
+  className?: string;
+};
+
+export function Logo({ className = "h-9 w-auto sm:h-10" }: LogoProps) {
   return (
     <Image
       src="/LogoPrincipal.png"
-      alt="Casa com Alma"
+      alt=""
       width={99}
       height={70}
       priority
-      className="h-10 w-auto sm:h-12"
+      className={className}
     />
   );
 }

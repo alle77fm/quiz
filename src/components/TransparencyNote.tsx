@@ -4,7 +4,7 @@ type TransparencyNoteProps = {
 
 export function TransparencyNote({ text }: TransparencyNoteProps) {
   return (
-    <p className="max-w-prose border-l-2 border-gold-deep/50 pl-4 text-sm leading-relaxed text-ink-soft">
+    <p className="max-w-prose border-l border-gold/45 pl-4 text-xs leading-relaxed text-muted">
       {text}
     </p>
   );
