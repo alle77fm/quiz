@@ -2,6 +2,13 @@
 
 > Escopo do MVP de validação: o que entra, o que fica fora, hipótese e métricas de teste.
 > Este documento é especificação, não implementação.
+>
+> **Revisão 1:** o percurso passou a incluir uma tela de entrada antes de `q01`
+> (Tela 0, ver `FINAL_SEQUENCE.md` §2); prazo de retenção fechado em 90 dias (ver
+> `PRIVACY_RULES.md` §5).
+>
+> **Fechamento (Revisões 1 e 2):** seção 8 nova — "Refinamento em homologação" —
+> reúne os itens que não usam marcador de pendência e não bloqueiam a Fase 1.
 
 ---
 
@@ -32,6 +39,8 @@ indexação pública, com público convidado.
 
 ## 2. O que entra no MVP
 
+- Uma tela de entrada (Tela 0) antes da primeira pergunta, sem coleta de dado e sem
+  consentimento — ver `FINAL_SEQUENCE.md` §2.
 - As 15 perguntas aprovadas (16 entradas com `q12a`/`q12b`), fechadas, sem campo de
   texto livre.
 - Cálculo determinístico do resultado no servidor: mapa principal, força predominante,
@@ -43,7 +52,8 @@ indexação pública, com público convidado.
 - Envio do resumo à psicóloga via Evolution API, apenas mediante consentimento de
   contato.
 - Feedback de 1 a 5 com comentário opcional, coletado após o resultado.
-- Persistência em Supabase (`quiz_response`), com RLS e sem exposição via Data API.
+- Persistência em Supabase (`quiz_response`), com RLS e sem exposição via Data API,
+  com prazo de retenção de 90 dias (ver `PRIVACY_RULES.md` §5 e `DATA_MODEL.md` §10).
 
 ## 3. O que não entra no MVP
 
@@ -106,7 +116,42 @@ O MVP está pronto para o teste controlado quando, cumulativamente:
   conteúdo apresentado à participante.
 - A sequência de 8 telas está implementada com os textos finais aprovados pela Jeruska.
 - Os dois consentimentos de `PRIVACY_RULES.md` estão implementados, não pré-marcados, e
-  versionados.
+  versionados. O texto do consentimento obrigatório reflete o objeto correto
+  (autoriza armazenamento e acesso em `/r/[token]`, não "processamento" — ver
+  `PRIVACY_RULES.md` §1.1).
+- O prazo de retenção de 90 dias e o fluxo de exclusão associado (`PRIVACY_RULES.md`
+  §5, §7) estão implementados e testados.
 - O envio à psicóloga via Evolution API está testado em ambiente controlado, incluindo o
   caminho de erro e o reenvio manual.
 - A lista de convidados do teste controlado está definida fora do sistema.
+
+## 8. Refinamento em homologação
+
+Itens que podem começar provisórios e ser avaliados com o quiz navegável, no
+ambiente de homologação na Vercel. **Não usam a convenção de pendência inline**
+(`[PENDENTE · JERUSKA]` / `[PENDENTE · ALEXANDRE]`) — não são conteúdo faltante de
+um responsável específico, são ajuste de percepção que só se avalia com a
+experiência rodando:
+
+- Imagem ou ilustração da Tela 0, e seu enquadramento (ver `FINAL_SEQUENCE.md`
+  §2.4.1).
+- Duração percebida da animação (tela 1).
+- Ritmo entre telas.
+- Tipografia.
+- Espaçamentos.
+- Responsividade.
+- Extensão percebida do relatório.
+- Nomenclatura dos botões.
+- Tom da ponte para a terapia (tela 4).
+- CTA final.
+- Ordem visual dos blocos.
+- Sensação de repetição.
+- Percepção de valor da experiência.
+
+**Nenhum item desta lista bloqueia a Fase 1.** A Fase 1 (fundação técnica e banco)
+pode começar com valores provisórios para todos eles.
+
+**Exceção — contraste não entra nesta lista.** Contraste de texto tem piso
+objetivo (WCAG AA), não é questão de gosto avaliável em homologação. É requisito
+de aceite em todas as telas e blocos, não refinamento — ver `FINAL_SEQUENCE.md`
+§2.9.

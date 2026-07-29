@@ -3,6 +3,17 @@
 > Compositor determinístico modular: famílias de bloco, orçamento de palavras, três
 > níveis de apoio/convite, seleção de ecos, ordem de montagem, inventário.
 > Este documento é especificação, não implementação. Documento central da Fase 0.
+>
+> **Revisão 1:** `N_q01 = 4` e `N_q15 = 8` fechados (não são mais hipótese); Eco 3
+> só pode vir de `q02` (não de `q01` — ver `QUIZ_CONTENT.md` §4.1); inventário
+> recalculado para **50** blocos. A aritmética de palavras não muda (§5).
+>
+> **Revisão 2:** mecanismo do mapa principal fechado e dimensão complementar
+> redefinida em `SCORING_MATRIX.md` (mapa por par de dimensões — `eixoDoMapa` — e
+> complementar por `necessidade`). Nenhuma mudança nas famílias de bloco,
+> orçamentos ou inventário deste documento: os papéis (força, atenção,
+> complementar, mapa) continuam apenas selecionando qual variante de cada família
+> renderiza. Blocos = 50, cenários = 528/793/848/848, sem alteração.
 
 ---
 
@@ -54,10 +65,10 @@ convite.
 | 3 | Força predominante | 6 (uma por dimensão) | 65–85 |
 | 4 | Ponto de atenção | 6 (uma por dimensão) | 65–85 |
 | 5 | Dimensão complementar | 6 (uma por dimensão) | 55–75 |
-| 6 | Contexto de moradia | `N_q01` (hipótese 4) | 38–55 |
+| 6 | Contexto de moradia | `N_q01` = 4 (fechado) | 38–55 |
 | 7 | Ecos | 0 a 3, reaproveitados de `reportEcho` (ver §9) | 18–26 cada |
 | 8 | Como aparece na rotina | 6 (uma por dimensão) | 55–75 |
-| 9 | Direção e encerramento | `N_q15` (hipótese 4) | 55–75 |
+| 9 | Direção e encerramento | `N_q15` = 8 (fechado; as 8 chaves em si são hipótese — ver `QUIZ_CONTENT.md` §7) | 55–75 |
 | 10 | Convite | **4** (`explorando`, `considerando`, `pronto_para_conversar`, `acolhimento`) | 45–65 |
 | 11 | Bloco de apoio (condicional) | 1 | 35–55 |
 | 12 | Aviso de não-diagnóstico | 1 | 20–30 |
@@ -164,6 +175,14 @@ em qualquer família, para qualquer nível, exige recalcular os quatro cenários
 documento antes de ser aceito. Isso vale mesmo para aumentos que pareçam pequenos ou
 isolados a uma única família.
 
+**Confirmação — Revisão 1:** `N_q15` subiu de 4 (hipótese) para 8 (fechado). Isso
+**não** altera nenhum dos quatro cenários acima, porque em qualquer relatório
+**apenas uma variante** da família 9 é renderizada — o custo por relatório é o
+orçamento de uma única variante (55–75 palavras), independentemente de existirem 4
+ou 8 variantes possíveis no total. Ir de quatro para oito variantes altera o
+**inventário** de blocos a escrever (§11), não o **orçamento** de palavras por
+relatório. Os quatro cenários seguem exatamente: 528 / 793 / 848 / 848.
+
 ## 6. Três níveis de apoio e convite
 
 | Nível | Condição | Bloco de apoio | Convite |
@@ -182,8 +201,8 @@ nível 2 for acionado, o nível 1 não é avaliado.
 - **Nível 1** — combinação de pontuação em faixa baixa nas dimensões de `acolhimento`,
   `limites` e `autocuidado`. Limiar exato: `[PENDENTE · JERUSKA]`.
 - **Nível 2** — combinações específicas e nomeadas de alternativas (não faixa de
-  pontuação), listadas explicitamente na configuração. Definição: `[PENDENTE ·
-  JERUSKA]`.
+  pontuação), listadas explicitamente na configuração. Definição:
+  `[PENDENTE · JERUSKA]`.
 
 **Restrição de desenho, não negociável nesta fase:** o critério do nível 2 é
 deliberadamente estreito — uma lista de combinações nomeadas, não uma faixa de
@@ -214,8 +233,8 @@ nomeada e acessível.
 - **Eco 1:** a resposta elegível de maior contribuição para a dimensão do mapa
   principal.
 - **Eco 2:** a resposta elegível de maior contribuição para a dimensão complementar.
-- **Eco 3:** a resposta elegível vinda do contexto do percurso (cômodo Contexto —
-  `q01`/`q02`, ver `QUIZ_CONTENT.md` §4).
+- **Eco 3:** a resposta elegível vinda do contexto do percurso — **apenas `q02`**
+  (fechado na Revisão 1; `q01` não gera eco, ver `QUIZ_CONTENT.md` §4.1).
 - Cômodos distintos são **preferidos**, mas relevância tem prioridade sobre distinção.
 - Desempate por ordem crescente de `id` de pergunta.
 - Alternativas com `eligibleForEcho: false` nunca são selecionadas.
@@ -285,15 +304,17 @@ Níveis 1 e 2 — o bloco de apoio ocupa a posição imediatamente anterior ao c
 | 3. Força predominante | 6 |
 | 4. Ponto de atenção | 6 |
 | 5. Dimensão complementar | 6 |
-| 6. Contexto de moradia | `N_q01` (hipótese 4) |
+| 6. Contexto de moradia | `N_q01` = 4 (fechado) |
 | 7. Ecos | 0 — reaproveita `reportEcho` de `QUIZ_CONTENT.md` (§9 acima) |
 | 8. Como aparece na rotina | 6 |
-| 9. Direção e encerramento | `N_q15` (hipótese 4) |
+| 9. Direção e encerramento | `N_q15` = 8 (fechado) |
 | 10. Convite | 4 |
 | 11. Bloco de apoio | 1 |
 | 12. Aviso de não-diagnóstico | 1 |
-| **Total (hipótese `N_q01=N_q15=4`)** | **46** |
+| **Total (`N_q01=4`, `N_q15=8`, ambos fechados)** | **50** |
 
-Este total deve ser idêntico ao total de "blocos de relatório" somado em
-`CONTENT_KIT.md`. Se `N_q01` ou `N_q15` mudarem, os dois documentos precisam ser
-atualizados juntos.
+Total recalculado: 4+4+6+6+6+4+0+6+8+4+1+1 = 50 (subiu de 46 para 50 porque `N_q15`
+foi fechado em 8, não mais na hipótese de 4; `N_q01` permaneceu 4). Este total deve
+ser idêntico ao total de "blocos de relatório" somado em `CONTENT_KIT.md`. Se as
+oito chaves de `q15` mudarem de número (não de conteúdo — ver `QUIZ_CONTENT.md` §7),
+os dois documentos precisam ser atualizados juntos.

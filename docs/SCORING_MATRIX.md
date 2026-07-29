@@ -1,14 +1,23 @@
 # SCORING_MATRIX — Casa com Alma
 
-> Regras de cálculo: dimensões, mapa principal, dimensão complementar, força
-> predominante, ponto de atenção, e todos os desempates, de forma determinística.
+> Regras de cálculo: dimensões, normalização, mapa principal, dimensão complementar,
+> força predominante, ponto de atenção — incluindo a ordem de desempate dos papéis
+> narrativos, que antes vivia num documento próprio e dedicado.
 > Este documento é especificação, não implementação.
+>
+> **Revisão 2:** mecanismo do mapa principal fechado (Opção A — par de dimensões,
+> §8); direcionalidade fechada como restrição estrutural (§7); dimensão
+> complementar redefinida por `necessidade`, agora excluindo também o ponto de
+> atenção como restrição rígida (§10); cobertura mínima refinada — por caminho
+> (`q12a`/`q12b`), com noção de contribuição efetiva (§4); conteúdo do documento de
+> desempate de papéis narrativos incorporado aqui; esse arquivo foi excluído (a
+> Fase 0 volta a ter dez documentos).
 
 ---
 
 ## 1. As seis dimensões
 
-Ordem canônica fixa (usada em todo desempate deste documento e dos demais):
+Ordem canônica fixa (usada em todo desempate deste documento):
 
 1. `acolhimento`
 2. `limites`
@@ -17,23 +26,22 @@ Ordem canônica fixa (usada em todo desempate deste documento e dos demais):
 5. `reciprocidade`
 6. `movimento`
 
-Esta ordem reproduz a ordem em que as dimensões aparecem na seção 5.4 da
-especificação original. Ela não expressa importância — é apenas o critério de
-desempate de último recurso, igual para todo o motor.
+Esta ordem reproduz a seção 5.4 da especificação original. Ela não expressa
+importância — é o critério de desempate de último recurso, igual para todo o motor.
 
-### 1.1 Definições operacionais
+Ordem canônica fixa dos quatro mapas (seção 5.5 da especificação original):
 
-`[PENDENTE · JERUSKA]` — uma frase por dimensão, descritiva e operacional, não
-clínica, definindo o que cada uma mede.
+```
+casa-refugio · casa-de-reencontro · casa-dos-vinculos · casa-em-renovacao
+```
 
-> **Ambiguidade resolvida por conta própria:** a especificação original pede essa
-> definição como entrega deste documento (não a marca como pendência), mas a seção 4
-> do prompt original proíbe "qualquer interpretação, formulação ou hipótese sobre
-> estados emocionais". Uma definição operacional de uma dimensão como `acolhimento` ou
-> `vinculos` formula, mesmo que em nível de instrumento, o que esses construtos
-> significam. Optei por tratar essas seis frases como conteúdo da Jeruska, não como
-> estrutura, e marquei como pendência. Ver item 4 da seção de entrega para o registro
-> formal desta decisão.
+### 1.1 Definições operacionais — `[PENDENTE · JERUSKA]`
+
+Uma frase por dimensão, descritiva e operacional, não clínica. **Item 1 da fila de
+escrita** (ver `CONTENT_KIT.md` §0) — sem elas, nenhum peso pode ser atribuído.
+
+Toda definição deve obedecer à restrição fechada do §7: as seis dimensões são
+positivamente orientadas, sem exceção.
 
 ## 2. Contribuição de perguntas para dimensões
 
@@ -42,175 +50,290 @@ conteúdo):
 
 | Pergunta | `acolhimento` | `limites` | `autocuidado` | `vinculos` | `reciprocidade` | `movimento` |
 |---|---|---|---|---|---|---|
-| `q01` … `q15` (16 linhas, ver `QUIZ_CONTENT.md`) | `[PENDENTE · JERUSKA]` | … | … | … | … | … |
-
-Regra estrutural: cada alternativa não-neutra tem `weights: Partial<Record<Dimension,
-number>>` — pode contribuir para uma ou mais dimensões simultaneamente (ver
-`QUIZ_CONTENT.md`, §3). A tabela acima registra, por pergunta, **quais** dimensões
-podem receber peso; os valores numéricos ficam nas próprias alternativas.
+| `q01`, `q02` … `q14` (ver `QUIZ_CONTENT.md`; `q15` fora — não pontua) | `[PENDENTE · JERUSKA]` | … | … | … | … | … |
 
 ## 3. Faixa de pesos
 
-Decisão técnica (não é conteúdo psicológico): pesos são inteiros no intervalo
-`[-2, 2]`.
+Pesos são inteiros no intervalo **`[-2, 2]`** — restrição técnica fechada da matriz.
+Zero equivale a "sem contribuição a essa dimensão" e não precisa ser declarado
+explicitamente. **Os pesos concretos continuam `[PENDENTE · JERUSKA]`** — a faixa é
+estrutura; os valores são conteúdo.
 
-Justificativa: um intervalo pequeno e simétrico em torno de zero mantém a soma por
-dimensão legível, evita que uma única alternativa domine o resultado, e é simples de
-auditar manualmente durante a Fase 2. Zero equivale a "sem contribuição a essa
-dimensão" e não precisa ser declarado explicitamente (a ausência da chave no objeto
-`weights` já significa zero).
+## 4. Cobertura mínima por dimensão — por caminho (`q12a`/`q12b`)
 
-`[PENDENTE · ALEXANDRE]` — confirmar se `[-2, 2]` é adequado ou se a Jeruska prefere
-outra granularidade (por exemplo `[-3, 3]` ou pesos não-inteiros). Qualquer mudança
-aqui não afeta a aritmética de palavras do relatório — afeta apenas a matemática do
-motor de pontuação.
+### 4.1 Por que "por caminho"
 
-## 4. Cálculo da pontuação por dimensão
+`q12a` e `q12b` são mutuamente exclusivas — uma participante só responde uma das
+duas. A cobertura efetiva de cada dimensão precisa, portanto, ser garantida **em
+cada caminho possível**, não em uma contagem combinada que misturaria as duas
+variantes. A validação roda **separadamente** para o caminho `q12a` e para o
+caminho `q12b`.
+
+### 4.2 Contribuição efetiva (definição fechada nesta revisão)
+
+Uma pergunta só conta como contribuição efetiva para uma dimensão quando suas
+alternativas produzem **variação real** de peso naquela dimensão — isto é, existe
+ao menos duas alternativas dessa pergunta com valores diferentes de
+`weights[dimensão]`.
+
+Uma chave de peso presente em todas as alternativas de uma pergunta, mas com o
+**mesmo valor em todas elas** (incluindo o caso de ser sempre zero, ou sempre
+qualquer outro número fixo), **não conta** como cobertura efetiva — é contribuição
+nominal, sem capacidade real de mover o score daquela dimensão.
+
+### 4.3 Restrições (falham a validação estrutural, não o build de runtime — rodam
+sobre a tabela de pesos, antes de qualquer relatório existir)
+
+- Cada dimensão recebe contribuição efetiva de **no mínimo três perguntas**, em
+  **cada** caminho (`q12a` e `q12b` avaliados separadamente).
+- `maximoDePerguntasPorDimensao − minimoDePerguntasPorDimensao ≤ 2`, calculado sobre
+  a contagem de perguntas com contribuição efetiva por dimensão, também avaliado
+  separadamente para cada caminho.
+
+A validação falha quando:
+
+- alguma dimensão tem menos de três perguntas com contribuição efetiva, em
+  qualquer um dos dois caminhos;
+- a diferença entre a dimensão mais coberta e a menos coberta ultrapassa dois, em
+  qualquer um dos dois caminhos;
+- o caminho `q12a` satisfaz as regras acima e o caminho `q12b` não (ou o inverso) —
+  os dois caminhos precisam satisfazer as duas restrições, cada um por si;
+- alguma dimensão não tem variação real em nenhuma pergunta (cobertura nominal
+  apenas, sem capacidade de alterar o score — ver §4.2).
+
+### 4.4 Relação com a normalização
+
+Esta restrição existe porque a normalização (§6) corrige a escala, mas agrava o
+efeito da cobertura desigual: uma dimensão tocada por poucas perguntas atinge 0 ou
+100 com mais frequência que uma dimensão tocada por muitas, o que a faria dominar
+força/atenção sem que isso reflita a participante de fato ter mais ou menos daquele
+recurso.
+
+## 5. Cálculo do score bruto por dimensão
 
 ```
-score(dimensão) = soma, sobre todas as perguntas respondidas exceto q15,
-                  do weights[dimensão] de cada alternativa selecionada
+bruto(dimensão) = soma, sobre todas as perguntas respondidas por aquela
+                  participante exceto q15 (incluindo q01 e a variante de
+                  q12 efetivamente exibida — q12a OU q12b, nunca as duas),
+                  do weights[dimensão] da alternativa selecionada
                   (0 quando a alternativa não declara peso para essa dimensão)
 ```
 
+`q15` nunca contribui para nenhum `bruto(dimensão)` — alimenta exclusivamente a
+família 9 (`Direção e encerramento`). `q01` contribui normalmente ao score; apenas
+não gera eco (`QUIZ_CONTENT.md` §4.1) e também determina qual variante de `q12` é
+exibida.
+
 Determinístico por construção: soma de inteiros fixos, sem dependência de ordem de
-iteração (a soma é comutativa) e sem chamada externa.
+iteração (soma comutativa) e sem chamada externa.
 
-## 5. Mapa principal
+## 6. Normalização
 
-### 5.1 Pendência estrutural — tabela mapa → eixo
-
-`[PENDENTE · JERUSKA]` — Existem quatro mapas (`casa-refugio`, `casa-de-reencontro`,
-`casa-dos-vinculos`, `casa-em-renovacao`) e seis dimensões. Não há correspondência de
-um para um. A regra "dimensão complementar diferente do eixo do mapa principal" só é
-computável quando existir esta tabela:
-
-| Mapa | Dimensão(ões) de eixo |
-|---|---|
-| `casa-refugio` | `[PENDENTE · JERUSKA]` |
-| `casa-de-reencontro` | `[PENDENTE · JERUSKA]` |
-| `casa-dos-vinculos` | `[PENDENTE · JERUSKA]` |
-| `casa-em-renovacao` | `[PENDENTE · JERUSKA]` |
-
-Um mapa **pode** ter mais de uma dimensão de eixo. Se tiver, a restrição de exclusão
-(§6.1) exclui **todas** as dimensões de eixo daquele mapa da lista de candidatas a
-dimensão complementar — não apenas uma. Isso é assim independentemente de quantas
-dimensões de eixo cada mapa acabar tendo: a restrição opera sobre o conjunto de eixo do
-mapa selecionado, não sobre uma dimensão isolada.
-
-Não atribuí nenhuma dimensão a nenhum mapa: a afinidade aparente entre nomes de mapa e
-nomes de dimensão (por exemplo, `casa-refugio` soando próximo de `acolhimento`) pode
-não corresponder à intenção da Jeruska, e a decisão é de conteúdo.
-
-### 5.2 Pendência estrutural — eixo do mapa principal e força predominante coincidem?
-
-`[PENDENTE · ALEXANDRE]` — não está definido se a dimensão de eixo do mapa selecionado
-é sempre a mesma dimensão escolhida como força predominante (§7). As duas leituras:
-
-**Leitura A — coincidem sempre.** O mapa principal é obtido revertendo a tabela do
-§5.1 a partir da força predominante: `mapa_principal = mapa cujo conjunto de eixo
-contém a dimensão de força predominante`. Neste caso, a restrição "complementar
-diferente do eixo do mapa" (§6.1) e a dimensão de força predominante (§7) referem-se à
-mesma dimensão, e a cadeia de desempate da dimensão complementar se reduz: excluir o
-eixo do mapa é equivalente a excluir a força predominante.
-
-**Leitura B — não coincidem necessariamente.** O mapa principal é obtido por uma regra
-própria (por exemplo, soma agregada das dimensões de eixo de cada mapa, comparada entre
-os quatro mapas), independente de qual dimensão isolada tem a maior pontuação. Neste
-caso, eixo do mapa, força predominante e ponto de atenção são até três dimensões
-potencialmente distintas, e a ordem de exclusão descrita no §6 importa integralmente.
-
-Este documento especifica a cadeia de desempate (§6, §7, §8) de forma que funcione sob
-as duas leituras: toda regra referencia "eixo do mapa principal" e "força predominante"
-como dois nomes que **podem** apontar para a mesma dimensão ou não, sem assumir uma das
-duas leituras internamente.
-
-### 5.3 Determinação do mapa (sob a Leitura B; reduz-se à Leitura A quando aplicável)
+Força predominante, ponto de atenção, mapa principal e dimensão complementar usam
+**exclusivamente** scores normalizados — nunca o `bruto`.
 
 ```
-score_mapa(M) = agregação (definida em conjunto com §5.1) das dimensões de eixo de M
-mapa_principal = mapa com maior score_mapa
+minimoTeorico(dimensão) = soma, para cada pergunta do conjunto de §5 efetivamente
+                          respondido por aquela participante, do MENOR
+                          weights[dimensão] entre as alternativas dessa pergunta
+
+maximoTeorico(dimensão) = soma, para o mesmo conjunto, do MAIOR
+                          weights[dimensão] entre as alternativas de cada pergunta
+
+normalizado(dimensão) = ((bruto(dimensão) - minimoTeorico(dimensão)) /
+                         (maximoTeorico(dimensão) - minimoTeorico(dimensão))) * 100
 ```
 
-Desempate: se dois ou mais mapas empatam em `score_mapa`, escolha o mapa cuja primeira
-dimensão de eixo (na ordem canônica do §1) aparece mais cedo na ordem canônica entre
-todos os mapas empatados. Isso é determinístico e não depende de ordem de iteração.
+`minimoTeorico`/`maximoTeorico` são calculados sobre o caminho efetivamente
+respondido (`q12a` ou `q12b`), tornando o cálculo determinístico por participante.
 
-## 6. Dimensão complementar
+### 6.1 Caso `maximoTeorico == minimoTeorico`
 
-### 6.1 Restrição (falha o build se violada)
+```
+scoreNormalizado = 50
+```
 
-A dimensão complementar **nunca** coincide com nenhuma dimensão de eixo do mapa
-principal (conjunto definido no §5.1).
+e a **validação estrutural da matriz falha** — uma dimensão sem variação real não é
+considerada válida para produção. Diferente da leitura da revisão anterior (que
+tratava este caso como puramente defensivo e inatingível): nesta revisão, ele **é**
+um critério de reprovação explícito da matriz de pesos, não apenas um fallback
+silencioso. O valor `50` ainda é computado (para o motor nunca produzir `NaN`
+mesmo diante de uma configuração inválida), mas essa configuração não deve chegar à
+produção — é exatamente o que a restrição de cobertura efetiva do §4.2 deveria
+impedir.
 
-### 6.2 Algoritmo de seleção
+## 7. Direcionalidade das dimensões — fechada como restrição estrutural
 
-1. **Filtrar** — remova das seis dimensões todas as que são eixo do mapa principal.
-   As dimensões restantes são as candidatas válidas. (Restrição, não preferência.)
-2. **Ordenar** as candidatas válidas por `score(dimensão)` decrescente.
-3. **Preferência** — entre as candidatas empatadas no topo do ranking, prefira a que
-   for diferente do ponto de atenção (§8). Esta é uma preferência de ordenação entre
-   candidatas empatadas, não um filtro: se a candidata de maior pontuação for única
-   (sem empate) e coincidir com o ponto de atenção, ela é escolhida mesmo assim — a
-   preferência não descarta a candidata mais bem pontuada, apenas desempata entre
-   iguais.
-4. **Desempate final** — se ainda houver empate após o passo 3, escolha a candidata
-   que aparece primeiro na ordem canônica do §1.
+**Todas as seis dimensões são positivamente orientadas. Não existe dimensão com
+lógica invertida no MVP.**
 
-> **Nota sobre nomenclatura entre documentos:** o texto que resolve a pendência 3.2
-> (recebido em prompt de execução separado) usa em um ponto a expressão "preferência
-> complementar diferente da força", enquanto a regra de desempate propriamente dita
-> (seção "AJUSTE COMPLEMENTAR", também recebida no prompt de execução, não encontrada
-> no arquivo `FASE-0-adendo-secao-5_10-revisada.md` como o prompt indicava) define a
-> preferência como "diferente do **ponto de atenção**". Segui a segunda formulação
-> (diferente do ponto de atenção) por ser a que veio explicitamente nomeada como regra
-> de desempate; registro a variação de termos como algo a confirmar, não decidi por
-> conta própria qual delas está certa.
+- Score alto representa **maior presença** de um recurso.
+- Score baixo representa **menor presença** desse recurso.
+- `necessidade(dimensão) = 100 − normalizado(dimensão)` (ver §10).
 
-## 7. Força predominante
+Isso fecha, nesta revisão, a pendência de mecanismo que a Revisão 1 deixou aberta —
+não há mais duas leituras possíveis sobre se a direcionalidade poderia se inverter
+dimensão a dimensão. A Jeruska ratifica cada definição **obedecendo a esta regra**;
+ela não escolhe se a dimensão é positiva ou invertida — isso já está fechado.
 
-`força predominante = dimensão com maior score(dimensão)` entre as seis.
+`movimento` também deve ter definição positivamente orientada. Registrando um
+limite do que ela não pode significar, sem propor o que significa (conteúdo
+continua `[PENDENTE · JERUSKA]`): `movimento` não deve ser interpretada como
+agitação, impulsividade, instabilidade ou excesso de atividade — essas seriam
+leituras que tornariam "score alto" equivalente a "menos recurso", contrariando a
+orientação positiva fechada acima.
 
-Desempate: ordem canônica do §1 (a dimensão empatada que aparece primeiro na lista
-vence).
+## 8. Mapa principal — mecanismo fechado (Opção A: par de dimensões)
 
-## 8. Ponto de atenção
+**Aprovado nesta revisão.** Cada um dos quatro mapas é associado a um **par de
+dimensões**.
 
-`ponto de atenção = dimensão com menor score(dimensão)` entre as seis, **excluindo** a
-dimensão escolhida como força predominante.
+### 8.1 Tabela mapa → par de dimensões
 
-**Restrição (falha o build se violada):** força predominante é sempre diferente de
-ponto de atenção. A exclusão no cálculo acima garante isso por construção — não é
-apenas uma checagem posterior.
+`[PENDENTE · JERUSKA]` — a Jeruska fornece as associações; o executor técnico não
+escolhe os pares.
 
-Desempate: ordem canônica do §1, aplicada às dimensões restantes após excluir a força
-predominante.
+| Mapa | Dimensão A | Dimensão B |
+|---|---|---|
+| `casa-refugio` | `[PENDENTE · JERUSKA]` | `[PENDENTE · JERUSKA]` |
+| `casa-de-reencontro` | `[PENDENTE · JERUSKA]` | `[PENDENTE · JERUSKA]` |
+| `casa-dos-vinculos` | `[PENDENTE · JERUSKA]` | `[PENDENTE · JERUSKA]` |
+| `casa-em-renovacao` | `[PENDENTE · JERUSKA]` | `[PENDENTE · JERUSKA]` |
 
-## 9. Cadeia de desempate — resumo determinístico
+**Restrições estruturais sobre esta tabela** (validação falha se violadas):
 
-Para qualquer papel (força predominante, ponto de atenção, dimensão complementar, mapa
-principal):
+- As duas dimensões de um mesmo mapa devem ser **diferentes** entre si.
+- Os **quatro pares devem ser únicos** — nenhum par pode se repetir entre mapas
+  (mesmo com as duas dimensões trocadas de posição).
+- Nenhum mapa pode conter duas vezes a mesma dimensão.
+- Nenhuma decisão de preenchimento desta tabela depende de aleatoriedade ou de
+  ordem de iteração de objetos — é uma tabela estática, definida uma vez pela
+  Jeruska e versionada em código.
 
-1. Nunca há aleatoriedade (`Math.random` proibido) nem uso de `Date` no cálculo.
-2. Nunca há dependência de ordem de iteração de objeto — toda comparação é sobre uma
-   lista ordenada explicitamente (ordem canônica do §1 para dimensões, ordem canônica
-   da seção 5.5 do original para mapas: `casa-refugio`, `casa-de-reencontro`,
-   `casa-dos-vinculos`, `casa-em-renovacao`).
-3. Restrições (força ≠ atenção; complementar ≠ eixo do mapa) são aplicadas como filtro,
-   antes de qualquer ranking.
-4. Preferências (complementar ≠ ponto de atenção) são aplicadas como critério de
-   ordenação entre candidatas empatadas, nunca como filtro.
-5. O desempate final, sempre disponível e sempre decisivo, é a ordem canônica.
+O conjunto das duas dimensões associadas ao mapa vencedor é chamado, a partir desta
+revisão, **`eixoDoMapa`**.
 
-## 10. `scoreSnapshot`
+### 8.2 Fórmula do mapa principal
 
-Gravado junto do resultado (ver `DATA_MODEL.md`), para permitir reconstituir qualquer
-resultado antigo:
+```
+necessidade(dimensão) = 100 - normalizado(dimensão)
+
+mapScore(M) = (necessidade(eixo1 de M) + necessidade(eixo2 de M)) / 2
+
+mapa_principal = mapa com maior mapScore
+```
+
+### 8.3 Desempate entre mapas, nesta ordem
+
+1. Maior `mapScore`.
+2. Maior valor **mínimo** entre as duas necessidades do par (`min(necessidade(eixo1),
+   necessidade(eixo2))`).
+3. Maior valor **máximo** entre as duas necessidades do par (`max(necessidade(eixo1),
+   necessidade(eixo2))`).
+4. Ordem canônica fixa dos quatro mapas (§1).
+
+A fórmula e a ordem de desempate estão **fechadas tecnicamente**. A Jeruska precisa
+validar apenas quais dimensões compõem cada par (§8.1) — não o mecanismo.
+
+### 8.4 Por que `necessidade`, não `normalizado`, no mapScore
+
+O mapa principal é lido como "o ambiente que mais precisa de atenção segundo o par
+de dimensões que o define" — por isso o mapScore usa `necessidade` (100 menos o
+normalizado), não o normalizado diretamente. Isso é coerente com a direcionalidade
+fechada no §7: como todas as dimensões são positivas (mais = mais recurso),
+`necessidade` é a mesma transformação para as seis, sem exceção por dimensão.
+
+## 9. Força predominante e ponto de atenção
+
+**A) Força predominante**
+
+```
+força predominante = dimensão com maior normalizado(dimensão)
+```
+
+Desempate: ordem canônica fixa das dimensões (§1).
+
+**B) Ponto de atenção**
+
+```
+ponto de atenção = dimensão com menor normalizado(dimensão), excluindo a força
+                    predominante
+```
+
+Desempate: ordem canônica fixa das dimensões, aplicada às dimensões restantes após
+excluir a força.
+
+**Restrição:** força predominante ≠ ponto de atenção — garantida por construção
+(exclusão no próprio cálculo, não apenas checagem posterior).
+
+## 10. Dimensão complementar — redefinida nesta revisão
+
+```
+candidatas = as seis dimensões, EXCLUINDO:
+             - as duas dimensões de eixoDoMapa (§8.1)
+             - a força predominante (§9.A)
+             - o ponto de atenção (§9.B)
+
+dimensão complementar = dimensão de MAIOR necessidade(dimensão) entre as candidatas
+```
+
+Desempate: ordem canônica fixa das dimensões, aplicada às candidatas restantes.
+
+**Mudança em relação à Revisão 1:** antes, a complementar era escolhida por maior
+`normalizado` (força), e a exclusão do ponto de atenção era apenas preferência de
+ordenação entre empatadas, não restrição. Nesta revisão, **as três exclusões
+(eixoDoMapa, força, atenção) são todas restrições rígidas** — falham a validação se
+violadas — e o critério de seleção passa a ser `necessidade` (maior necessidade
+entre as candidatas), não mais `normalizado`.
+
+**Validações obrigatórias:**
+
+- Força predominante ≠ ponto de atenção.
+- Dimensão complementar ≠ força predominante.
+- Dimensão complementar ≠ ponto de atenção.
+- Dimensão complementar não pertence a `eixoDoMapa`.
+- Exatamente uma força predominante é renderizada por relatório.
+- Exatamente um ponto de atenção é renderizado por relatório.
+- Exatamente uma dimensão complementar é renderizada por relatório.
+- Nunca dois blocos da mesma família (ver `LANGUAGE_RULES.md`).
+
+### 10.1 Garantia de não-vazio para a dimensão complementar
+
+O conjunto excluído (`eixoDoMapa` ∪ `{força}` ∪ `{atenção}`) tem, no mínimo, 2
+dimensões e, no máximo, 4: `eixoDoMapa` sempre contribui 2 dimensões distintas
+(§8.1); força e atenção são sempre distintas entre si (§9); mas força e/ou atenção
+podem coincidir com uma ou ambas as dimensões de `eixoDoMapa`. No pior caso (força e
+atenção ambas dentro de `eixoDoMapa`), o conjunto excluído tem exatamente 2
+elementos; no melhor caso (força e atenção fora de `eixoDoMapa` e distintas entre
+si), tem 4. Como há seis dimensões ao todo, sempre sobram **entre 2 e 4**
+candidatas — nunca zero. A dimensão complementar sempre resolve.
+
+## 11. Ordem de resolução, determinística — resumo
+
+1. **Força** — maior `normalizado` (§9.A).
+2. **Mapa principal** — via pares e `mapScore` (§8).
+3. **Ponto de atenção** — menor `normalizado`, excluindo a força (§9.B).
+4. **Complementar** — maior `necessidade` entre as candidatas após excluir
+   `eixoDoMapa`, força e atenção (§10).
+5. **Desempates residuais** — ordem canônica fixa das seis dimensões (§1) em todo
+   ponto de decisão acima; ordem canônica fixa dos quatro mapas (§1) no passo 2.
+
+Nenhum passo depende de aleatoriedade, de `Date` ou de ordem de iteração de objeto.
+Todas as comparações são sobre valores normalizados/derivados fixos e listas
+ordenadas explicitamente.
+
+## 12. `scoreSnapshot`
 
 ```ts
 {
   quizVersao: string
-  scores: Record<Dimension, number>        // score(dimensão) das seis
+  scores: Record<Dimension, {
+    bruto: number
+    minimoTeorico: number
+    maximoTeorico: number
+    normalizado: number   // 0-100, ou 50 no caso degenerado do §6.1
+  }>
+  eixoDoMapa: [Dimension, Dimension]
   mapaPrincipal: string
   forcaPredominante: Dimension
   pontoDeAtencao: Dimension
@@ -219,28 +342,65 @@ resultado antigo:
 }
 ```
 
-## 11. Garantias
+Nenhum score — bruto, normalizado ou necessidade — é exibido à participante em
+nenhuma tela.
+
+## 13. Garantias
 
 - **Determinismo:** a mesma sequência de respostas sempre produz o mesmo
-  `scoreSnapshot`. Toda soma é sobre inteiros fixos; todo desempate é por ordem
-  canônica fixa.
-- **Não-vazio:** as seis dimensões sempre têm um `score` (mesmo que zero — ausência de
-  peso conta como zero, não como ausência de dimensão). Força predominante, ponto de
-  atenção e dimensão complementar sempre resolvem para uma dimensão via a cadeia do
-  §9, porque a ordem canônica garante um vencedor mesmo em empate total. O mapa
-  principal sempre resolve pelo mesmo motivo (§5.3). Logo, nenhuma combinação de
-  respostas pode produzir resultado vazio.
+  `scoreSnapshot`. Toda soma é sobre inteiros fixos; toda normalização usa fórmula
+  fixa com tratamento explícito do caso degenerado; todo desempate é por ordem
+  canônica fixa; a tabela mapa→par é estática, não depende de iteração.
+- **Não-vazio:** as seis dimensões sempre têm `normalizado` definido. Força,
+  atenção e mapa principal sempre resolvem pela ordem canônica em caso de empate
+  total. Dimensão complementar sempre resolve — prova no §10.1.
 
-## 12. Casos que a Fase 2 precisará testar
+## 14. Casos que a Fase 2 precisará testar
 
-- Perfil predominante de cada um dos quatro mapas.
-- Empate entre dois mapas.
-- Empate entre três ou mais mapas.
-- Todas as respostas neutras (todos os `score(dimensão) = 0`).
-- Respostas em extremo baixo (todas as alternativas de peso mínimo).
-- Respostas em extremo alto (todas as alternativas de peso máximo).
-- Caminho `q12a` e caminho `q12b`.
-- Empate entre força predominante e outra dimensão.
-- Empate entre candidatas a dimensão complementar após a restrição do §6.1.
-- Caso em que a única candidata a dimensão complementar (após filtro) coincide com o
-  ponto de atenção (a preferência do §6.2 não tem o que ordenar).
+### Motor (mapa por pares)
+
+- Mapa calculado corretamente pelos quatro pares.
+- Configuração com par inválido (duas dimensões iguais no mesmo mapa) — deve falhar
+  a validação, não o cálculo em produção.
+- Dois mapas com o mesmo par — deve falhar a validação.
+- Empate de `mapScore` entre dois ou mais mapas.
+- Desempate resolvido pelo menor valor mínimo do par (passo 2 do §8.3).
+- Desempate resolvido pelo maior valor máximo do par (passo 3 do §8.3).
+- Desempate resolvido pela ordem canônica (passo 4 do §8.3).
+- Mesma entrada produzindo sempre o mesmo resultado (determinismo).
+
+### Papéis narrativos
+
+- Força diferente do ponto de atenção.
+- Complementar diferente da força.
+- Complementar diferente do ponto de atenção.
+- Complementar fora de `eixoDoMapa`.
+- Empate total entre as seis dimensões.
+- Empate parcial entre dimensões (só entre as duas maiores, só entre as duas
+  menores).
+- Complementar inicialmente coincidente com força, antes da exclusão (verificar que
+  a exclusão redireciona corretamente).
+- Complementar inicialmente coincidente com atenção, antes da exclusão.
+- Complementar inicialmente pertencente a `eixoDoMapa`, antes da exclusão.
+- Repetibilidade do resultado após todas as exclusões e desempates.
+- Exatamente um bloco de cada família (força, atenção, complementar, mapa,
+  convite).
+
+### Cobertura
+
+- Cobertura mínima satisfeita no caminho `q12a`.
+- Cobertura mínima satisfeita no caminho `q12b`.
+- Diferença máxima de cobertura igual a dois (limite aceito).
+- Rejeição quando a diferença ultrapassa dois.
+- Pergunta com peso nominal (mesmo valor em todas as alternativas) não contando
+  como cobertura efetiva.
+- Dimensão com menos de três perguntas com contribuição efetiva, em qualquer
+  caminho.
+- Caso em que `q12a` satisfaz a regra e `q12b` não (e o inverso).
+
+### Normalização
+
+- Cobertura desigual entre dimensões (respeitando o limite do §4), verificando que
+  nenhuma domina sistematicamente os extremos.
+- Caso degenerado do §6.1 — confirmar que o motor não quebra e que a validação
+  estrutural reprova a configuração.

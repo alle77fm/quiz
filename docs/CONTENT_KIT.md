@@ -4,8 +4,33 @@
 > de linguagem aplicáveis, agrupado por família. Sem nenhum texto de exemplo.
 > Este documento é especificação, não implementação. É o que a psicóloga recebe para
 > começar a escrever.
+>
+> **Revisão 1:** totais recalculados (`N_q01=4`, `N_q15=8`, ambos fechados; Tela 0
+> adicionada); restrição de cobertura mínima registrada no topo (§0); ordem de fila
+> de escrita registrada no topo (§0).
+>
+> **Revisão 2:** nenhum total mudou (68/≤56/50/23, confirmados). Cobertura mínima
+> refinada por caminho `q12a`/`q12b` (ver `SCORING_MATRIX.md` §4); mapa principal
+> fechado por par de dimensões (`eixoDoMapa`); reafirmado que a hipótese de 48
+> `reportEcho` não é critério de aceite (§2).
 
 ---
+
+## 0. Antes de qualquer tabela — ordem da fila e restrição que a condiciona
+
+**Item 1 da fila de escrita da psicóloga: as seis definições operacionais de
+dimensão** (Grupo E, §6). Sem elas, nenhum peso pode ser atribuído a nenhuma
+alternativa — a tabela de contribuição pergunta→dimensão (`SCORING_MATRIX.md` §2)
+não pode ser preenchida sem saber o que cada dimensão significa operacionalmente.
+Todo o restante do inventário abaixo (Grupo A em diante) fica bloqueado até essas
+seis frases existirem.
+
+**Restrição que condiciona a distribuição de pesos:** `SCORING_MATRIX.md` §4 exige
+que **toda dimensão receba contribuição de no mínimo três perguntas**. Isso não é um
+detalhe técnico isolado — condiciona como a Jeruska pode distribuir pesos entre as
+16 perguntas: nenhuma dimensão pode ficar concentrada em uma ou duas perguntas
+apenas, mesmo que pareça a escolha mais natural de conteúdo. Ler `SCORING_MATRIX.md`
+§4 e §6 (normalização) antes de atribuir qualquer peso.
 
 ## 1. Como usar este checklist
 
@@ -20,36 +45,44 @@ proibidos em `LANGUAGE_RULES.md` §2. Cada grupo abaixo lista apenas as regras
 
 ## 2. Grupo A — Alternativas do quiz (`QUIZ_CONTENT.md`)
 
-| Item | Quantidade (hipótese `N_q01=N_q15=4`) | Palavras por item |
+| Item | Quantidade (`N_q01=4`, `N_q15=8`, fechados) | Palavras por item |
 |---|---|---|
-| `label` de alternativa | 64 | Livre (texto de opção, curto) |
-| `reportEcho` de alternativa | ≤ 64 (64 menos as alternativas marcadas como neutras) | Sem limite fixo — reformulação natural, curta |
-| Pesos (`weights`) por alternativa | 64 (todas, exceto neutras têm ao menos uma dimensão) | Numérico, não é texto |
+| `label` de alternativa | **68** | Livre (texto de opção, curto) |
+| `reportEcho` de alternativa | **≤ 56** (universo elegível: `q02`–`q14`, exclui `q01` e `q15` por regra fechada) | Sem limite fixo — reformulação natural, curta |
+| `reportEcho` — hipótese de planejamento (≈15% neutras entre as elegíveis) | **48** | — |
+| Pesos (`weights`) por alternativa | 68 (`q01`–`q14` contribuem; `q15` nunca tem peso) | Numérico, não é texto |
 
 **Regras adicionais deste grupo:**
 - `reportEcho` não repete o `label` literalmente.
-- Alternativas neutras: `reportEcho` vazio (`null`) e sem peso.
-- Decidir, por alternativa, se ela é elegível para eco (`eligibleForEcho`).
-- Para `q01`: marcar quais alternativas caracterizam "mora sozinha" e quais
-  caracterizam "mora acompanhada" (tabela de `QUIZ_CONTENT.md` §6).
+- Todas as alternativas de `q01` e `q15`: `reportEcho` vazio (`null`) e
+  `eligibleForEcho: false`, por regra estrutural — `q01` ainda recebe pesos
+  normalmente (contribui para score), só não gera eco.
+- Para `q01`: marcar qual alternativa caracteriza "mora sozinha" (leva a `q12a`) e
+  quais caracterizam "mora acompanhada" (levam a `q12b`).
+- `q12a` e `q12b` têm **enunciados próprios**, diferentes entre si (fechado na
+  Revisão 1), além de alternativas e pesos próprios.
+- `q15`: oito alternativas. As oito chaves de direção (`paz`, `leveza`, `uniao`,
+  `seguranca`, `liberdade`, `afeto`, `presenca`, `clareza`) são **hipótese de
+  trabalho** — a Jeruska pode substituir qualquer uma, desde que o total permaneça
+  oito.
 
 ## 3. Grupo B — Blocos de relatório (`REPORT_COMPOSER.md`)
 
-| Família | Itens (hipótese) | Palavras por item |
+| Família | Itens | Palavras por item |
 |---|---|---|
 | 1. Abertura | 4 | 45–60 |
 | 2. Mapa principal | 4 | 85–110 |
 | 3. Força predominante | 6 | 65–85 |
 | 4. Ponto de atenção | 6 | 65–85 |
 | 5. Dimensão complementar | 6 | 55–75 |
-| 6. Contexto de moradia | `N_q01` (4) | 38–55 |
+| 6. Contexto de moradia | 4 (`N_q01`, fechado) | 38–55 |
 | 7. Ecos | 0 — reaproveita `reportEcho` do Grupo A, não escrever de novo | — |
 | 8. Como aparece na rotina | 6 | 55–75 |
-| 9. Direção e encerramento | `N_q15` (4) | 55–75 |
+| 9. Direção e encerramento | 8 (`N_q15`, fechado) | 55–75 |
 | 10. Convite | 4 (`explorando`, `considerando`, `pronto_para_conversar`, `acolhimento`) | 45–65 |
 | 11. Bloco de apoio | 1 | 35–55 |
 | 12. Aviso de não-diagnóstico | 1 | 20–30 |
-| **Subtotal** | **46** | — |
+| **Subtotal** | **50** | — |
 
 **Regras adicionais deste grupo:**
 - Cada bloco autossuficiente — nenhuma referência a outro bloco do mesmo relatório.
@@ -59,41 +92,44 @@ proibidos em `LANGUAGE_RULES.md` §2. Cada grupo abaixo lista apenas as regras
   disponibilidade; mesmo registro de tom do bloco de apoio.
 - Família 11 (bloco de apoio): acolhimento breve e canais de apoio públicos. Nunca
   alarmista, nunca acusatório, nunca interpretativo.
-- Família 12 (aviso de não-diagnóstico): é o único bloco autorizado a conter a palavra
-  "diagnóstico", sob o mecanismo de exceção do linter (`LANGUAGE_RULES.md` §3).
+- Família 12 (aviso de não-diagnóstico): único bloco autorizado a conter a palavra
+  "diagnóstico", sob o mecanismo de exceção do linter.
 
 ## 4. Grupo C — Textos de tela (`FINAL_SEQUENCE.md`)
 
 | Tela | Itens |
 |---|---|
+| 0. Entrada da experiência (nova) | 5 |
 | 1. Processamento | 1 |
 | 2. Prévia do mapa | 4 |
 | 3. Intenção | 4 |
 | 4. Ponte para a terapia | 3 |
 | 5. Mapa pronto | 2 |
 | 6. Captura e consentimentos (mensagem de confiança) | 1 |
-| 7. Resultado completo | 1 |
+| 7. Resultado completo (reconhecimento + nota de validade do link, nova) | 2 |
 | 8. Feedback | 1 |
-| **Subtotal** | **17** |
+| **Subtotal** | **23** |
 
 **Regras adicionais deste grupo:**
+- Tela 0: sem promessa de resultado, benefício ou transformação; sem estimativa de
+  duração; nota de transparência é informativa, não pode soar como consentimento.
 - Tela 4: proibido vermelho contra verde, termo depreciativo, ou promessa de cura,
-  solução ou resultado; a coluna "refletir no seu tempo" descreve um caminho legítimo,
-  não um déficit.
+  solução ou resultado.
 - Tela 6: CTA não usa a palavra "análise".
-- Tela 7: abre com reconhecimento, não com constatação de falta.
+- Tela 7: abre com reconhecimento, não com constatação de falta; a nota de validade
+  do link não descreve o armazenamento como permanente ou indefinido.
 
 ## 5. Grupo D — Consentimentos (`PRIVACY_RULES.md`)
 
 | Item | Itens |
 |---|---|
-| Consentimento obrigatório (tratamento) | 1 |
+| Consentimento obrigatório (agora: autoriza armazenamento + acesso em `/r/[token]`) | 1 |
 | Consentimento opcional (contato) | 1 |
 | **Subtotal** | **2** |
 
 **Regra adicional deste grupo:** cada texto precisa de uma versão registrada
-(`consentimento_versao`); qualquer edição futura incrementa a versão, não substitui o
-texto anterior nas respostas já gravadas.
+(`consentimento_versao`). O texto do consentimento obrigatório não pode afirmar que
+autoriza um processamento que já ocorreu — ver `PRIVACY_RULES.md` §1.1.
 
 ## 6. Grupo E — Definições operacionais de dimensão (`SCORING_MATRIX.md`)
 
@@ -102,8 +138,8 @@ texto anterior nas respostas já gravadas.
 | Definição de dimensão (uma frase cada) | 6 |
 | **Subtotal** | **6** |
 
-**Regra adicional deste grupo:** descritiva e operacional, não clínica — define o que
-a dimensão mede como eixo do instrumento, não uma interpretação sobre uma pessoa.
+**Regra adicional deste grupo:** descritiva e operacional, não clínica. **Item 1 da
+fila de escrita** — ver §0.
 
 ## 7. Total consolidado
 
@@ -111,34 +147,98 @@ a dimensão mede como eixo do instrumento, não uma interpretação sobre uma pe
 
 | Categoria | Total |
 |---|---|
-| `label` de alternativa | 64 |
-| `reportEcho` | ≤ 64 |
-| Blocos de relatório | 46 |
-| Textos de tela | 17 |
-| **Total (limite superior)** | **≤ 191** |
-
-Este é o total pedido literalmente pela especificação de execução ("total de label,
-total de reportEcho, total de blocos de relatório, total de textos de tela"). É um
-limite superior, não um número fechado, porque `reportEcho` depende de quantas
-alternativas a Jeruska marcar como neutras — ela pode ser menor que 64.
+| `label` de alternativa | 68 |
+| `reportEcho` | ≤ 56 (hipótese de planejamento: 48) |
+| Blocos de relatório | 50 |
+| Textos de tela | 23 |
+| **Total (limite superior)** | **≤ 197** |
+| **Total (hipótese de planejamento, com reportEcho=48)** | **189** |
 
 ### 7.2 Total geral do que a psicóloga precisa escrever (todos os grupos)
 
 | Grupo | Total |
 |---|---|
-| A — Alternativas (label + reportEcho) | 64 + ≤64 |
-| B — Blocos de relatório | 46 |
-| C — Textos de tela | 17 |
+| A — Alternativas (label + reportEcho) | 68 + ≤56 |
+| B — Blocos de relatório | 50 |
+| C — Textos de tela | 23 |
 | D — Consentimentos | 2 |
 | E — Definições de dimensão | 6 |
-| **Total geral (limite superior)** | **≤ 199** |
+| **Total geral (limite superior)** | **≤ 205** |
+| **Total geral (hipótese de planejamento)** | **197** |
 
-## 8. Conferência cruzada com `QUIZ_CONTENT.md` e `REPORT_COMPOSER.md`
+## 8. Classificação das pendências por fase
 
-- `QUIZ_CONTENT.md` §5: total de `label` = 64, total de `reportEcho` ≤ 64. Idêntico ao
-  Grupo A acima.
-- `REPORT_COMPOSER.md` §11: total de blocos de relatório = 46. Idêntico ao Grupo B
-  acima (subtotal 46).
-- Se `N_q01` ou `N_q15` forem confirmados com valor diferente de 4, os três documentos
-  (`QUIZ_CONTENT.md`, `REPORT_COMPOSER.md`, este) precisam ser recalculados juntos —
-  nenhum dos três pode ser atualizado isoladamente sem quebrar esta conferência.
+> **Atenção de nomenclatura:** os "Grupo A"–"Grupo E" das seções 2 a 6 acima
+> agrupam **categorias de conteúdo** (alternativas, blocos, telas, consentimentos,
+> definições). Os "Grupo A"–"Grupo D" **desta** seção agrupam as mesmas pendências
+> por **quando precisam ser resolvidas**. São dois eixos de classificação
+> diferentes sobre o mesmo conjunto de itens — não confundir um com o outro.
+
+A convenção de marcador inline não muda: existem exatamente dois marcadores em
+todo o projeto, `[PENDENTE · JERUSKA]` e `[PENDENTE · ALEXANDRE]`. A classificação
+por fase vive nesta tabela, não em um terceiro marcador.
+
+### Grupo A — bloqueiam a Fase 2 (motor determinístico)
+
+Responsável: Jeruska, em todos os itens.
+
+- Definições operacionais das seis dimensões (`SCORING_MATRIX.md` §1.1) — **item 1
+  da fila**, ver §0 acima: sem elas nenhum peso pode ser atribuído, e todo o
+  restante deste grupo fica bloqueado atrás dele.
+- Pesos concretos das alternativas (`SCORING_MATRIX.md` §3).
+- Tabela pergunta → dimensão (`SCORING_MATRIX.md` §2).
+- Tabela mapa → par de dimensões, `eixoDoMapa` (`SCORING_MATRIX.md` §8.1).
+- Limiar exato do nível 1 de apoio (`REPORT_COMPOSER.md` §6.1).
+- Combinações nomeadas do nível 2 de apoio (`REPORT_COMPOSER.md` §6.1).
+- Pesos de `q12a` e `q12b` (parte da tabela pergunta → dimensão).
+- Ratificação da orientação positiva das seis dimensões, dimensão por dimensão
+  (`SCORING_MATRIX.md` §7) — o mecanismo já está fechado; falta a Jeruska
+  confirmar que cada definição que ela escrever respeita essa orientação.
+
+### Grupo B — bloqueiam a Fase 3 e a homologação funcional
+
+Responsável: Jeruska, em todos os itens.
+
+- Enunciados finais de `q12a` e `q12b` (`QUIZ_CONTENT.md` §2).
+- Labels finais das alternativas de `q01` (`QUIZ_CONTENT.md` §6).
+- Alternativas finais de `q12a` e `q12b`.
+- Conteúdo definitivo das oito posições de `q15` (`QUIZ_CONTENT.md` §7).
+- Textos finais dos dois consentimentos (`PRIVACY_RULES.md` §1).
+- Blocos finais do relatório — todas as famílias de `REPORT_COMPOSER.md` §4.
+- `reportEcho` finais (`QUIZ_CONTENT.md`).
+- Textos das telas, incluindo os cinco da Tela 0 (`FINAL_SEQUENCE.md`).
+- Texto final do bloco de apoio (família 11).
+- Variante `acolhimento` da família Convite (família 10).
+
+### Grupo C — refinamento em homologação
+
+**Não usa marcador de pendência.** Lista completa em `MVP_SCOPE.md`, seção
+"Refinamento em homologação": imagem da Tela 0, duração percebida da animação,
+ritmo entre telas, tipografia, espaçamentos, responsividade, extensão percebida do
+relatório, nomenclatura dos botões, tom da ponte para a terapia, CTA final, ordem
+visual dos blocos, sensação de repetição, percepção de valor da experiência.
+Nenhum item deste grupo bloqueia a Fase 1.
+
+**Exceção:** contraste não entra neste grupo — é requisito WCAG AA de aceite, não
+refinamento (`FINAL_SEQUENCE.md` §2.9).
+
+### Grupo D — decisões fechadas
+
+Não reapresentar como pendência: stack (Next.js/Tailwind/Supabase/Vercel/TS
+estrito), cardinalidades (`q01=4`, `q15=8`, `q12a`/`q12b` separados), mecanismo do
+mapa (par de dimensões, `eixoDoMapa`), normalização 0–100, cobertura mínima (três
+perguntas por caminho, diferença máxima dois), retenção (90 dias), reenvio por
+script (`retry-delivery`), estrutura da Tela 0, ausência de coleta de gênero,
+ausência de PDF/LLM/n8n/painel administrativo, inventários consolidados (68 labels,
+≤56 `reportEcho`, 50 blocos, 23 textos de tela, cenários 528/793/848/848).
+
+## 9. Conferência cruzada com `QUIZ_CONTENT.md` e `REPORT_COMPOSER.md`
+
+- `QUIZ_CONTENT.md` §5: total de `label` = 68, total de `reportEcho` ≤ 56 (hipótese
+  48). Idêntico ao Grupo A acima.
+- `REPORT_COMPOSER.md` §11: total de blocos de relatório = 50. Idêntico ao Grupo B
+  acima.
+- `FINAL_SEQUENCE.md` §15: total de textos de tela = 23. Idêntico ao Grupo C acima.
+- Se o número de chaves de `q15` mudar (hoje 8, fechado — só o conteúdo das oito
+  palavras é hipótese), os quatro documentos (`QUIZ_CONTENT.md`, `REPORT_COMPOSER.md`,
+  `FINAL_SEQUENCE.md` não é afetado, este) precisam ser recalculados em conjunto.

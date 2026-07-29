@@ -3,6 +3,15 @@
 > Estrutura das 15 perguntas (16 entradas, com `q12a`/`q12b`). Este documento define
 > formato e inventário, não o conteúdo das alternativas.
 > Este documento é especificação, não implementação.
+>
+> **Revisão 1:** `N_q01 = 4` e `N_q15 = 8` fechados (não são mais hipótese
+> paramétrica); `q12a`/`q12b` confirmadas com enunciados diferentes; elegibilidade de
+> eco de `q01` e `q15` fechada como **não elegível**; inventário recalculado.
+>
+> **Revisão 2:** `q01` fechada estruturalmente em 1 alternativa "mora só" + 3
+> "mora acompanhado" (não mais "ao menos uma de cada"); `q15` usa convenção de id
+> própria `q15-k1`…`q15-k8`; hipótese de `reportEcho` (48) reafirmada como não
+> sendo critério de aceite. Totais inalterados: 68 labels, ≤56 reportEcho.
 
 ---
 
@@ -14,9 +23,9 @@ transcrito literalmente. Todo o resto é `[PENDENTE · JERUSKA]`.
 
 ## 2. Tabela de perguntas
 
-| id | Cômodo | Texto da pergunta (aprovado) | Nº de alternativas | Elegível para eco |
+| id | Cômodo | Texto da pergunta | Nº de alternativas | Elegível para eco |
 |---|---|---|---|---|
-| `q01` | Contexto | Com quem você mora atualmente? | `N_q01` — ver §5, hipótese 4 | Sim — fonte de Eco 3 (contexto) |
+| `q01` | Contexto | Com quem você mora atualmente? | **4** (fechado) | **Não** (fechado, Revisão 1) — alimenta apenas a família 6 (Contexto de moradia) |
 | `q02` | Contexto | Ao chegar em casa, qual sensação aparece primeiro? | 4 | Sim — fonte de Eco 3 (contexto) |
 | `q03` | Porta de entrada | Você consegue deixar as preocupações do lado de fora? | 4 | Sim — fonte de Eco 1/Eco 2 |
 | `q04` | Porta de entrada | Sente que seu espaço e seus limites são respeitados? | 4 | Sim — fonte de Eco 1/Eco 2 |
@@ -27,19 +36,16 @@ transcrito literalmente. Todo o resto é `[PENDENTE · JERUSKA]`.
 | `q09` | Cozinha | O que mais parece estar faltando na rotina da casa? | 4 | Sim — fonte de Eco 1/Eco 2 |
 | `q10` | Quarto | Seu quarto permite que você realmente descanse? | 4 | Sim — fonte de Eco 1/Eco 2 |
 | `q11` | Quarto | Você consegue parar sem sentir culpa? | 4 | Sim — fonte de Eco 1/Eco 2 |
-| `q12a` | Quarto | Como percebe a proximidade emocional em sua vida? — variante "mora sozinha" (ver nota abaixo) | 4 | Sim — fonte de Eco 1/Eco 2 |
-| `q12b` | Quarto | Como percebe a proximidade emocional em sua vida? — variante "mora acompanhada" (ver nota abaixo) | 4 | Sim — fonte de Eco 1/Eco 2 |
+| `q12a` | Quarto | `[PENDENTE · JERUSKA]` — enunciado próprio, variante "mora sozinha" | 4 | Sim — fonte de Eco 1/Eco 2 |
+| `q12b` | Quarto | `[PENDENTE · JERUSKA]` — enunciado próprio, variante "mora acompanhada" | 4 | Sim — fonte de Eco 1/Eco 2 |
 | `q13` | Espaço pessoal | Você encontra tempo e espaço para cuidar de si? | 4 | Sim — fonte de Eco 1/Eco 2 |
 | `q14` | Espaço pessoal | Existe algum espaço, objeto ou assunto da casa que você evita? | 4 | Sim — fonte de Eco 1/Eco 2 |
-| `q15` | Janela | O que você gostaria de sentir mais dentro de sua casa e dentro de você? | `N_q15` — ver §5, hipótese 4 | **Não** — não pontua; alimenta a família 9 (direção e encerramento) |
+| `q15` | Janela | O que você gostaria de sentir mais dentro de sua casa e dentro de você? | **8** (fechado) | **Não** (fechado) — não pontua; alimenta a família 9 (direção e encerramento) |
 
-> **Nota sobre `q12a`/`q12b`:** a especificação aprovada fornece um único enunciado para
-> a pergunta 12 e determina que as duas variantes têm "alternativas e pesos próprios".
-> Não está definido se o **texto do enunciado** também varia entre `q12a` e `q12b`, ou
-> se apenas alternativas e pesos diferem com o mesmo enunciado.
-> `[PENDENTE · ALEXANDRE / JERUSKA]` — confirmar antes da Fase 1. Nenhum novo enunciado
-> foi inventado aqui: o texto acima é o único aprovado, repetido para as duas variantes
-> como ponto de partida.
+**Fechado nesta revisão:** `q12a` e `q12b` têm enunciados diferentes entre si (não
+apenas alternativas e pesos diferentes, como a Fase 0 original deixava em aberto),
+além de alternativas e pesos próprios. Quatro alternativas cada. Todos os textos
+(enunciado e alternativas das duas variantes) são `[PENDENTE · JERUSKA]`.
 
 ## 3. Formato do objeto de alternativa (Fase 1)
 
@@ -54,7 +60,12 @@ transcrito literalmente. Todo o resto é `[PENDENTE · JERUSKA]`.
 ```
 
 Convenção de `id`: `{idDaPergunta}-a{N}`, `N` de 1 em diante na ordem de exibição.
-Exemplo para `q12a`: `q12a-a1`, `q12a-a2`, `q12a-a3`, `q12a-a4`.
+
+**Exceção fechada nesta revisão — `q15`:** as oito posições estruturais de `q15`
+usam a convenção própria `q15-k1` … `q15-k8` (não `q15-a1`…`q15-a8`), para marcar
+que são posições estruturais fixas, distintas do conteúdo hipotético que cada uma
+carrega (ver §7). O `k` não substitui a regra geral de unicidade — `q15-k1`…`q15-k8`
+continuam únicos em todo o quiz, como qualquer outro `id`.
 
 ## 4. Regras
 
@@ -64,54 +75,102 @@ Exemplo para `q12a`: `q12a-a1`, `q12a-a2`, `q12a-a3`, `q12a-a4`.
   condições andam juntas; uma sem a outra é erro de configuração (ver
   `LANGUAGE_RULES.md`, validações estruturais).
 - Todo `id` de alternativa é único em todo o quiz — não só dentro da própria pergunta.
-- Nenhuma alternativa pode ter `weights` vazio, exceto as neutras.
+- Nenhuma alternativa pode ter `weights` vazio, exceto as neutras. `q01` e `q15` são
+  exceção a esta exceção: **todas** as alternativas de `q01` e `q15` têm
+  `reportEcho: null` e `eligibleForEcho: false` por regra estrutural fechada (§4.1),
+  independentemente de serem ou não "neutras" em termos de peso — `q01` continua
+  contribuindo com `weights` normalmente para o score (ver `SCORING_MATRIX.md` §5);
+  `q15` nunca tem `weights` (não pontua, por definição da Fase 0 original).
 - A resposta de `q01` determina qual variante de `q12` é exibida (`q12a` ou `q12b`).
-  A tabela alternativa-de-`q01` → variante-de-`q12` é o placeholder da seção 5.11 do
-  adendo v1.1, reproduzida abaixo (§6).
+  **Estrutura fechada nesta revisão (Revisão 2):** `q01` tem exatamente 4
+  alternativas, distribuídas estruturalmente como **1 alternativa** que representa
+  "morar só" e **3 alternativas** que representam "morar acompanhado" — não é mais
+  "ao menos uma de cada categoria", é uma proporção fixa 1+3. A alternativa de
+  "morar só" leva a `q12a`; as três alternativas de "morar acompanhado" levam a
+  `q12b`. Os labels de `q01` que caracterizam cada categoria são
+  `[PENDENTE · JERUSKA]` (ver §6).
 - `q15` não contribui para nenhuma dimensão de pontuação; alimenta exclusivamente a
-  família 9 (`Direção e encerramento`) do `REPORT_COMPOSER.md`.
+  família 9 (`Direção e encerramento`) do `REPORT_COMPOSER.md`. As oito alternativas
+  de `q15` representam oito "chaves de direção" — ver §7, hipótese de trabalho.
+
+### 4.1 Elegibilidade de eco — fechado nesta revisão
+
+- `q01` **não** gera `reportEcho`. Alimenta apenas a família 6 (`Contexto de
+  moradia`) do `REPORT_COMPOSER.md`.
+- `q15` **não** gera `reportEcho`. Alimenta apenas a família 9 (`Direção e
+  encerramento`).
+- Todas as alternativas de `q01` e de `q15`: `reportEcho: null`,
+  `eligibleForEcho: false` — por regra estrutural, não por serem neutras em peso.
 - Eco 1 e Eco 2 só podem vir de alternativas de `q03`–`q14` (inclui `q12a`/`q12b`).
-  Eco 3 só pode vir de alternativas de `q01`/`q02` (cômodo Contexto). Esta segmentação
-  é convenção estrutural definida aqui para tornar a seleção de ecos verificável; ver
-  `REPORT_COMPOSER.md` para a regra completa de seleção.
+- **Eco 3 só pode vir de `q02`** (não de `q01` — correção desta revisão em relação à
+  Fase 0 original, que tratava as duas perguntas do cômodo Contexto como fonte
+  possível de Eco 3). Esta segmentação é convenção estrutural para tornar a seleção
+  de ecos verificável; ver `REPORT_COMPOSER.md` para a regra completa de seleção.
 
-## 5. Inventário paramétrico
+## 5. Inventário
 
-Fórmula:
+`N_q01 = 4` e `N_q15 = 8` estão fechados nesta revisão — o inventário abaixo não é
+mais paramétrico nesses dois valores.
 
 ```
-total_perguntas    = 16   (14 fixas + q01 + q15)
-total_alternativas = 14 × 4 + N_q01 + N_q15
-                   = 56 + N_q01 + N_q15
-total_labels       = total_alternativas
-total_reportEcho   = total_alternativas − total_neutras
+total_perguntas    = 16   (14 fixas @ 4 + q01 @ 4 + q15 @ 8)
+total_alternativas = 14 × 4 + 4 + 8 = 56 + 12 = 68
+total_labels       = total_alternativas = 68
+total_elegivel_eco = total_alternativas − alternativas de q01 (4) − alternativas de q15 (8)
+                   = 68 − 12 = 56
+total_reportEcho   = total_elegivel_eco − total_neutras_entre_elegiveis
 ```
 
-`total_neutras` é decisão de conteúdo da Jeruska (quantas alternativas, por pergunta,
-são neutras) e não pode ser antecipado aqui. `total_reportEcho` é portanto um **limite
-superior**, não um valor fechado.
-
-### Tabela preenchida — hipótese de trabalho `N_q01 = 4`, `N_q15 = 4`
+`total_neutras_entre_elegiveis` é decisão de conteúdo da Jeruska e não pode ser
+antecipado com exatidão.
 
 | Item | Valor |
 |---|---|
 | Total de perguntas | 16 |
-| Total de alternativas (`total_labels`) | 56 + 4 + 4 = **64** |
-| Total de `reportEcho` (limite superior) | **≤ 64** (64 − nº de alternativas neutras, a definir) |
+| Total de alternativas (`total_labels`) | **68** |
+| Total elegível para eco (universo de `q02`–`q14`) | 56 |
+| Total de `reportEcho` — limite superior | **≤ 56** |
+| Total de `reportEcho` — hipótese de trabalho (≈15% neutras entre as elegíveis, para planejamento) | **48** (56 × 0,85 ≈ 47,6, arredondado) |
 
-`[PENDENTE · ALEXANDRE]` — confirmar `N_q01` e `N_q15`. Se qualquer um dos dois mudar,
-recalcule esta tabela, a tabela de `REPORT_COMPOSER.md` (família 6 e família 9) e o
-total consolidado de `CONTENT_KIT.md`.
+**Revisão 2 — reafirmado:** a hipótese de 48 **não é critério de aceite** e **não
+obriga** a Jeruska a escrever exatamente 48 `reportEcho`. Serve apenas como
+estimativa de esforço para planejamento. Depois que o conteúdo profissional for
+escrito, o inventário deve ser recalculado com o número real de alternativas
+neutras.
 
 ## 6. Tabela alternativa de `q01` → variante de `q12` (placeholder)
 
+Estrutura fechada nesta revisão: **1 alternativa** de `q01` caracteriza "morar só" e
+leva a `q12a`; as **outras 3** caracterizam "morar acompanhado" e levam a `q12b`.
+
 | Alternativa de `q01` (`id`) | Caracteriza | Variante de `q12` exibida |
 |---|---|---|
-| `[PENDENTE · JERUSKA]` | mora sozinha | `q12a` |
-| `[PENDENTE · JERUSKA]` | mora acompanhada | `q12b` |
-| `[PENDENTE · JERUSKA]` | mora acompanhada | `q12b` |
-| `[PENDENTE · JERUSKA]` | *(demais alternativas de `q01`, se houver mais de duas)* | `[PENDENTE · JERUSKA]` |
+| `[PENDENTE · JERUSKA]` | mora só | `q12a` |
+| `[PENDENTE · JERUSKA]` | mora acompanhado | `q12b` |
+| `[PENDENTE · JERUSKA]` | mora acompanhado | `q12b` |
+| `[PENDENTE · JERUSKA]` | mora acompanhado | `q12b` |
 
-`q01` deve conter pelo menos uma alternativa de cada categoria (sozinha / acompanhada)
-para que a bifurcação nunca fique indefinida. Nenhuma alternativa de `q01` pode ficar
-sem mapeamento para uma das duas variantes de `q12`.
+Nenhuma alternativa de `q01` pode ficar sem mapeamento. A proporção 1+3 é fixa —
+não é "ao menos uma de cada", como na revisão anterior deste documento.
+
+## 7. `q15` — oito posições estruturais (`q15-k1`…`q15-k8`)
+
+O número de posições estruturais de `q15` está **fechado em 8**:
+`q15-k1`…`q15-k8` (convenção de `id` própria, ver §3). A cardinalidade de oito é
+estrutura; o conteúdo de cada posição é conteúdo, não estrutura, e entra aqui
+apenas como hipótese de trabalho fornecida pelo responsável pelo produto — **não
+como conteúdo final aprovado**:
+
+```
+paz · leveza · uniao · seguranca · liberdade · afeto · presenca · clareza
+```
+
+A Jeruska pode substituir qualquer uma dessas oito palavras, ou todas, desde que o
+total permaneça oito — o conteúdo definitivo das oito posições permanece
+`[PENDENTE · JERUSKA]`. **Se o número de posições mudar** (hoje fechado em 8, não se
+espera que mude), o inventário deste documento e a família 9 de
+`REPORT_COMPOSER.md` mudam junto — os dois documentos e `CONTENT_KIT.md` precisam
+ser recalculados em conjunto.
+
+`q15` reafirmado: não contribui para pontuação; não gera `reportEcho`; alimenta
+exclusivamente a família 9 (`Direção e encerramento`).

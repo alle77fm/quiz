@@ -3,6 +3,14 @@
 > Construções permitidas e proibidas, especificação do linter de linguagem e das
 > validações estruturais que rodam sobre a configuração do quiz.
 > Este documento é especificação, não implementação.
+>
+> **Revisão 1:** validações novas de cobertura mínima, ecos de `q01`/`q15`, totais
+> fechados, `leitura_prioritaria`, retenção e Tela 0.
+>
+> **Revisão 2:** as validações de mapa por pares e papéis narrativos, antes num
+> documento próprio hoje excluído, foram incorporadas em §4.4. Cobertura mínima
+> refinada por caminho `q12a`/`q12b` em §4.5. Demais validações reorganizadas em
+> §4.6–§4.8.
 
 ---
 
@@ -71,8 +79,8 @@ Rodam sobre a configuração do quiz, antes de qualquer relatório existir:
 - Flexões de gênero.
 - Repetição do mesmo bloco em um único relatório.
 - Alternativa com `reportEcho` preenchido mas `eligibleForEcho: false`, e o inverso.
-- Dimensão complementar igual a qualquer dimensão de eixo do mapa principal (ver
-  `SCORING_MATRIX.md` §6.1).
+- Dimensão complementar igual a qualquer dimensão de `eixoDoMapa` (ver
+  `SCORING_MATRIX.md` §10).
 
 ### 4.2 Cardinalidade (adendo 5.8)
 
@@ -101,6 +109,84 @@ Rodam sobre a configuração do quiz, antes de qualquer relatório existir:
 > `[PENDENTE · JERUSKA]` — ela depende do vocabulário real que a psicóloga usa nas
 > quatro variantes de convite, e só pode ser fechada depois que esses blocos forem
 > escritos.
+
+## 4.4 Mapa por pares e papéis narrativos (consolidado nesta revisão)
+
+> Estas validações viviam num documento próprio e dedicado. A Revisão 2 devolveu a
+> Fase 0 a dez documentos: as regras foram incorporadas aqui e em
+> `SCORING_MATRIX.md` §8–§11, e o arquivo separado foi
+> excluído. Nenhum conteúdo foi perdido na fusão.
+
+- As duas dimensões de um mesmo mapa (`eixoDoMapa`) devem ser diferentes entre si.
+  Falha a validação se um mapa tiver a mesma dimensão duas vezes.
+- Os quatro pares mapa→dimensões devem ser únicos entre si. Falha a validação se
+  dois mapas compartilharem o mesmo par.
+- Força predominante ≠ ponto de atenção — garantido por construção no cálculo
+  (`SCORING_MATRIX.md` §9), não apenas checado depois.
+- Dimensão complementar ≠ força predominante.
+- Dimensão complementar ≠ ponto de atenção.
+- Dimensão complementar não pertence a `eixoDoMapa`.
+- Exatamente uma força predominante, um ponto de atenção e uma dimensão
+  complementar são renderizados por relatório — nunca zero, nunca dois.
+- Nenhuma decisão de mapa ou de papel narrativo depende de aleatoriedade ou de
+  ordem de iteração de objetos.
+
+## 4.5 Cobertura mínima por caminho (Revisão 2)
+
+- Toda dimensão recebe contribuição **efetiva** (variação real de peso, não apenas
+  presença nominal da chave — ver `SCORING_MATRIX.md` §4.2) de no mínimo três
+  perguntas, **no caminho `q12a`** e, separadamente, **no caminho `q12b`**. Validação
+  roda sobre a tabela de pesos, nunca sobre respostas de participantes.
+- `maximoDePerguntasPorDimensao − minimoDePerguntasPorDimensao ≤ 2`, avaliado
+  separadamente para cada caminho.
+- Falha a validação se: qualquer dimensão tiver menos de três perguntas com
+  contribuição efetiva em qualquer caminho; a diferença de cobertura ultrapassar
+  dois em qualquer caminho; um caminho satisfizer as regras e o outro não; ou
+  alguma dimensão tiver apenas contribuição nominal (mesmo valor em todas as
+  alternativas de todas as perguntas que a tocam) sem variação real.
+- Caso `maximoTeorico == minimoTeorico` para uma dimensão: `scoreNormalizado = 50`
+  é computado (o motor não quebra), mas a validação estrutural da matriz **falha**
+  — esta configuração não é válida para produção (`SCORING_MATRIX.md` §6.1).
+
+## 4.6 Ecos, inventário e `q15` (consolidado)
+
+- `q01` nunca aparece como eco selecionado (`eligibleForEcho: false` em todas as
+  suas alternativas, por regra estrutural — `q01` ainda contribui pesos ao score).
+- `q15` nunca aparece como eco selecionado (mesma regra; `q15` nunca tem peso).
+- `q15` tem exatamente oito posições estruturais (`q15-k1`…`q15-k8`). Falha a
+  validação se o número for diferente de oito.
+- Total de `label` em `QUIZ_CONTENT.md` igual a 68.
+- Limite superior de `reportEcho` igual a 56 (hipótese de planejamento: 48 — não é
+  critério de aceite, é estimativa de esforço).
+- Total de blocos de relatório em `REPORT_COMPOSER.md` igual a 50.
+- Total de textos de tela em `FINAL_SEQUENCE.md` igual a 23.
+
+## 4.7 `nivelApoio` e `leitura_prioritaria`
+
+- `nivelApoio` está sempre presente no objeto `resultado`, com valor `0`, `1` ou `2`.
+  Qualquer outro valor falha o build.
+- `nivelApoio = 2` implica variante de convite `acolhimento`. Qualquer outra
+  combinação falha o build.
+- `nivelApoio ∈ {1, 2}` implica bloco de apoio presente.
+- `nivelApoio = 0` implica bloco de apoio ausente.
+- `nivelApoio = 2` implica `leitura_prioritaria = true` no payload da Evolution API
+  (`DELIVERY_CONTRACT.md`).
+- `nivelApoio ∈ {0, 1}` implica `leitura_prioritaria = false`.
+- A variante `acolhimento` está livre de verbo de ação comercial, conforme a lista do
+  §2 (extensível — lista final `[PENDENTE · JERUSKA]`, ver nota da versão anterior
+  deste documento).
+- `envio_status = 'enviado'` impede novo disparo (idempotência, ver
+  `DELIVERY_CONTRACT.md`).
+
+## 4.8 Retenção e Tela 0
+
+- Link de resultado (`/r/[token]`) respeita o período de retenção de 90 dias
+  (`PRIVACY_RULES.md` §5) — validação de dados, não de linguagem.
+- Nenhum texto voltado à participante usa os termos "permanente", "definitivo" ou
+  "para sempre" para descrever o armazenamento (ver `PRIVACY_RULES.md` §5).
+- Tela 0 sem nenhum elemento de consentimento ou caixa de marcar.
+- Tela 0 sem nenhuma coleta de dado, incluindo gênero.
+- Tela 0 sem barra de progresso.
 
 ## 5. Como as validações se relacionam com o linter
 

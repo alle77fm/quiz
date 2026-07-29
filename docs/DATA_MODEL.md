@@ -3,6 +3,17 @@
 > Tabela única `quiz_response`: colunas, estrutura dos JSONs, geração de token,
 > isolamento de schema e RLS.
 > Este documento é especificação, não implementação.
+>
+> **Revisão 1:** `scoreSnapshot` passa a gravar bruto, mínimo teórico, máximo
+> teórico e normalizado por dimensão (§6); `consentiu_tratamento` muda de objeto
+> (§0 abaixo); retenção fechada em 90 dias (§10, novo).
+
+## 0. Mudança de objeto do consentimento obrigatório
+
+`consentiu_tratamento` passou a autorizar o **armazenamento** das respostas e do
+resultado e a criação do acesso em `/r/[token]` — não mais "o tratamento das
+respostas" de forma genérica, porque o cálculo já ocorreu antes desta coluna existir
+(ver §7). Ver `PRIVACY_RULES.md` §1.1 para o texto e a justificativa completa.
 
 ---
 
@@ -110,13 +121,32 @@ distinta das respostas ao quiz de 15 perguntas.
     alternativaId: string
   }>                              // 0 a 3 entradas
   scoreSnapshot: {
-    scores: Record<Dimension, number>
+    scores: Record<Dimension, {
+      bruto: number
+      minimoTeorico: number
+      maximoTeorico: number
+      normalizado: number          // 0-100, ou 50 no caso degenerado (SCORING_MATRIX.md §6.1)
+    }>
+    eixoDoMapa: [Dimension, Dimension]   // Revisão 2 — par de dimensões do mapa vencedor
   }
 }
 ```
 
+`scoreSnapshot` foi ampliado na Revisão 1: antes gravava apenas `scores:
+Record<Dimension, number>` (o bruto). Agora grava, por dimensão, os quatro valores
+usados pela normalização (`SCORING_MATRIX.md` §6) — necessário porque força, ponto
+de atenção, mapa principal e dimensão complementar passam a ser calculados
+exclusivamente sobre `normalizado`, e reconstituir um resultado antigo exige saber
+também `minimoTeorico`/`maximoTeorico` daquele momento (que dependem de qual
+variante de `q12` foi respondida, ver `SCORING_MATRIX.md` §6).
+
+**Revisão 2:** `scoreSnapshot` passa a gravar também `eixoDoMapa` — o par de
+dimensões do mapa principal vencedor (`SCORING_MATRIX.md` §8.1), necessário para
+reconstituir por que a dimensão complementar daquele resultado foi excluída das
+candidatas (`SCORING_MATRIX.md` §10).
+
 `nivelApoio` está sempre presente, com valor `0`, `1` ou `2` — nunca ausente, nunca
-outro valor (ver `LANGUAGE_RULES.md` §4.3 para a validação estrutural correspondente).
+outro valor (ver `LANGUAGE_RULES.md` §4.7 para a validação estrutural correspondente).
 
 `convite.variante = "acolhimento"` só é válido quando `nivelApoio = 2`; qualquer outra
 combinação é erro de configuração, não um estado válido de dado.
@@ -145,6 +175,19 @@ tela 6 — consistente com a métrica de conclusão de `MVP_SCOPE.md` §5.
 - Índice único em `token` (já garantido pela constraint `unique`).
 - Índice em `envio_status` — usado para localizar `pendente` e `erro` no fluxo de
   reenvio manual (`DELIVERY_CONTRACT.md`).
-- Índice em `criado_em` — para consultas administrativas ordenadas por data (não há
-  painel administrativo neste MVP, mas consultas diretas ao banco durante o teste
-  controlado são esperadas).
+- Índice em `criado_em` — para consultas administrativas ordenadas por data, e para
+  o cálculo do prazo de retenção do §10 (localizar linhas com `criado_em` além dos
+  90 dias).
+
+## 10. Retenção — fechado em 90 dias (Revisão 1)
+
+- `criado_em` é a referência para contar o prazo de retenção de `PRIVACY_RULES.md`
+  §5: 90 dias.
+- `/r/[token]` permanece estável e imutável durante todo o período — nenhuma escrita
+  em `quiz_response` acontece entre o submit da tela 6 e a exclusão ao fim do prazo,
+  exceto `feedback_nota`/`feedback_texto` (tela 8) e as colunas de envio
+  (`envio_status`, `envio_erro`, `enviado_em`).
+- Ao fim dos 90 dias, a linha é excluída fisicamente pelo mesmo fluxo de
+  `PRIVACY_RULES.md` §7 (exclusão a pedido), não por um procedimento separado.
+- Sujeito a revisão jurídica antes do teste controlado — este documento não decide
+  base legal.
