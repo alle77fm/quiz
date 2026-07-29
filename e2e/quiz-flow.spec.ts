@@ -1,4 +1,11 @@
 import { test, expect, type Page } from "@playwright/test";
+import {
+  DEMO_Q01,
+  DEMO_Q12A,
+  DEMO_Q12B,
+  DEMO_QUESTIONS_FIM,
+  DEMO_QUESTIONS_MEIO,
+} from "@/config/quiz/v1/homologacao/demo-questions";
 
 const RESOLUTIONS = [
   { name: "360x800", width: 360, height: 800 },
@@ -21,6 +28,19 @@ async function answerQuestion(page: Page) {
 async function completeAllQuestions(page: Page, count: number) {
   for (let i = 0; i < count; i += 1) {
     await answerQuestion(page);
+  }
+}
+
+async function answerByLabel(page: Page, label: string) {
+  await page.getByRole("radio", { name: label }).click();
+}
+
+/** Responde q01 com a alternativa indicada e as 10 perguntas seguintes
+ * (q02–q11), chegando à posição de q12a/q12b sem respondê-la ainda. */
+async function chegarEmQ12(page: Page, opcaoQ01Label: string) {
+  await answerByLabel(page, opcaoQ01Label);
+  for (const questao of DEMO_QUESTIONS_MEIO) {
+    await answerByLabel(page, questao.opcoes[0].label);
   }
 }
 
@@ -99,7 +119,15 @@ test.describe("Fluxo do quiz — navegação, responsividade e capturas", () => 
     await page.getByRole("button", { name: "Ver meu resultado" }).click();
 
     await expect(page.getByText(/Maria Teste, seu mapa/)).toBeVisible();
-    await expect(page.getByText("15/15 respostas")).toBeVisible();
+
+    // resultado → feedback: fluxo completo até a última tela
+    await page.getByRole("button", { name: "Deixar um feedback" }).click();
+    await expect(
+      page.getByRole("heading", { name: "O que você achou desta experiência?" }),
+    ).toBeVisible();
+    await page.getByRole("radio", { name: "5" }).click();
+    await page.getByRole("button", { name: "Enviar feedback" }).click();
+    await expect(page.getByRole("heading", { name: "Obrigado." })).toBeVisible();
   });
 
   for (const viewport of SNAPSHOT_VIEWPORTS) {
@@ -155,4 +183,167 @@ test.describe("Fluxo do quiz — navegação, responsividade e capturas", () => 
       });
     });
   }
+});
+
+test.describe("Bifurcação estrutural q12a/q12b", () => {
+  test('q01 = "Vivo só" direciona para q12a', async ({ page }) => {
+    const opcaoSo = DEMO_Q01.opcoes.find((o) => o.perfilMoradia === "sozinha")!;
+    await page.goto("/quiz");
+    await chegarEmQ12(page, opcaoSo.label);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: DEMO_Q12A.texto }),
+    ).toBeVisible();
+  });
+
+  test("q01 = opção de morar acompanhado direciona para q12b", async ({
+    page,
+  }) => {
+    const opcaoAcompanhada = DEMO_Q01.opcoes.find(
+      (o) => o.perfilMoradia === "acompanhada",
+    )!;
+    await page.goto("/quiz");
+    await chegarEmQ12(page, opcaoAcompanhada.label);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: DEMO_Q12B.texto }),
+    ).toBeVisible();
+  });
+
+  test("nunca as duas variantes de q12 aparecem no mesmo percurso", async ({
+    page,
+  }) => {
+    const opcaoSo = DEMO_Q01.opcoes.find((o) => o.perfilMoradia === "sozinha")!;
+    await page.goto("/quiz");
+    await chegarEmQ12(page, opcaoSo.label);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: DEMO_Q12A.texto }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: DEMO_Q12B.texto }),
+    ).toHaveCount(0);
+  });
+
+  test("voltar até q01 e trocar a resposta recalcula o caminho (q12a → q12b)", async ({
+    page,
+  }) => {
+    const opcaoSo = DEMO_Q01.opcoes.find((o) => o.perfilMoradia === "sozinha")!;
+    const opcaoAcompanhada = DEMO_Q01.opcoes.find(
+      (o) => o.perfilMoradia === "acompanhada",
+    )!;
+
+    await page.goto("/quiz");
+    await chegarEmQ12(page, opcaoSo.label);
+    await expect(
+      page.getByRole("heading", { level: 1, name: DEMO_Q12A.texto }),
+    ).toBeVisible();
+
+    // volta 11 vezes: de q12 até q01
+    for (let i = 0; i < 11; i += 1) {
+      await page.getByRole("button", { name: "Voltar" }).click();
+    }
+    await expect(
+      page.getByRole("heading", { level: 1, name: DEMO_Q01.texto }),
+    ).toBeVisible();
+
+    await chegarEmQ12(page, opcaoAcompanhada.label);
+    await expect(
+      page.getByRole("heading", { level: 1, name: DEMO_Q12B.texto }),
+    ).toBeVisible();
+  });
+
+  test("cada percurso soma exatamente 15 perguntas até a tela de processamento", async ({
+    page,
+  }) => {
+    const opcaoSo = DEMO_Q01.opcoes.find((o) => o.perfilMoradia === "sozinha")!;
+    await page.goto("/quiz");
+    await chegarEmQ12(page, opcaoSo.label); // 1 (q01) + 10 (q02-q11) = 11 respostas
+    await answerQuestion(page); // q12a = 12ª resposta
+    for (const questao of DEMO_QUESTIONS_FIM) {
+      await answerByLabel(page, questao.opcoes[0].label); // q13-q15 = 13ª-15ª
+    }
+
+    await expect(page.getByText("Preparando o seu mapa")).toBeVisible();
+  });
+});
+
+test.describe("Isolamento de dados — sem rede, sem persistência", () => {
+  test("nenhuma requisição de rede é enviada durante o preenchimento do fluxo", async ({
+    page,
+  }) => {
+    const requisicoesForaDaOrigem: string[] = [];
+    const requisicoesDeEscrita: string[] = [];
+
+    page.on("request", (req) => {
+      const url = new URL(req.url());
+      if (url.origin !== "http://127.0.0.1:4300") {
+        requisicoesForaDaOrigem.push(req.url());
+      }
+      if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method())) {
+        requisicoesDeEscrita.push(`${req.method()} ${req.url()}`);
+      }
+    });
+
+    await page.goto("/quiz");
+    await completeAllQuestions(page, 15);
+    await expect(page.getByText("Preparando o seu mapa")).toBeVisible();
+    await page.getByRole("button", { name: "Continuar" }).click();
+    await page.getByRole("button", { name: "Continuar" }).click();
+    await page.getByRole("radio").first().click();
+    await page.getByText("Conversar com a Jeruska").click();
+    await page.getByRole("button", { name: "Continuar" }).click();
+    await page.getByLabel("Nome").fill("Maria Teste");
+    await page
+      .getByRole("checkbox", { name: /Autorizo o armazenamento/ })
+      .check();
+    await page.getByRole("button", { name: "Ver meu resultado" }).click();
+    await expect(page.getByText(/Maria Teste, seu mapa/)).toBeVisible();
+
+    expect(requisicoesForaDaOrigem).toEqual([]);
+    expect(requisicoesDeEscrita).toEqual([]);
+  });
+
+  test("nenhum dado pessoal permanece no navegador após reiniciar o fluxo", async ({
+    page,
+  }) => {
+    await page.goto("/quiz");
+    await completeAllQuestions(page, 15);
+    await expect(page.getByText("Preparando o seu mapa")).toBeVisible();
+    await page.getByRole("button", { name: "Continuar" }).click();
+    await page.getByRole("button", { name: "Continuar" }).click();
+    await page.getByRole("radio").first().click();
+    await page.getByText("Conversar com a Jeruska").click();
+    await page.getByRole("button", { name: "Continuar" }).click();
+    await page.getByLabel("Nome").fill("Maria Teste");
+    await page
+      .getByRole("checkbox", { name: /Autorizo o armazenamento/ })
+      .check();
+    await page.getByRole("button", { name: "Ver meu resultado" }).click();
+    await expect(page.getByText(/Maria Teste, seu mapa/)).toBeVisible();
+
+    const estadoAntes = await page.evaluate(() => ({
+      localStorage: window.localStorage.length,
+      sessionStorage: window.sessionStorage.length,
+      cookies: document.cookie,
+    }));
+    expect(estadoAntes.localStorage).toBe(0);
+    expect(estadoAntes.sessionStorage).toBe(0);
+    expect(estadoAntes.cookies).toBe("");
+
+    await page.goto("/quiz");
+    await expect(
+      page.getByRole("heading", { level: 1, name: DEMO_Q01.texto }),
+    ).toBeVisible();
+    await expect(page.getByText("Maria Teste")).toHaveCount(0);
+
+    const estadoDepois = await page.evaluate(() => ({
+      localStorage: window.localStorage.length,
+      sessionStorage: window.sessionStorage.length,
+      cookies: document.cookie,
+    }));
+    expect(estadoDepois.localStorage).toBe(0);
+    expect(estadoDepois.sessionStorage).toBe(0);
+    expect(estadoDepois.cookies).toBe("");
+  });
 });

@@ -13,7 +13,7 @@ export function FeedbackScreen() {
         <h1 className="font-display text-2xl font-extrabold text-cream">
           Obrigado.
         </h1>
-        <p className="text-muted">Seu feedback foi registrado (demonstração).</p>
+        <p className="text-muted">Seu feedback foi registrado.</p>
         <Link href="/" className="text-sm text-amber underline underline-offset-4">
           Voltar ao início
         </Link>

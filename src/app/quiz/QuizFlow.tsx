@@ -15,10 +15,39 @@ import { FeedbackScreen } from "@/components/quiz/FeedbackScreen";
 import {
   DEMO_DIMENSOES,
   DEMO_MAPA_PRINCIPAL,
-  DEMO_QUESTIONS,
-} from "@/config/quiz/v1/demo-questions";
+  DEMO_Q01,
+  DEMO_Q12A,
+  DEMO_Q12B,
+  DEMO_QUESTIONS_FIM,
+  DEMO_QUESTIONS_MEIO,
+  DEMO_TOTAL_PERGUNTAS,
+  type DemoQuestion,
+} from "@/config/quiz/v1/homologacao/demo-questions";
 
-const TOTAL_QUESTIONS = DEMO_QUESTIONS.length;
+const ULTIMO_INDICE_PERGUNTA = DEMO_TOTAL_PERGUNTAS - 1; // 0-14
+const INDICE_Q12 = 11; // 12ª pergunta (q01=0 ... q11=10, q12=11, q13..q15=12-14)
+
+/**
+ * Resolve qual pergunta aparece em cada posição do percurso (0-14).
+ *
+ * A posição 11 (a 12ª pergunta) é a única dinâmica: depende da resposta
+ * já dada a q01. Recalculada a cada render a partir de `respostas` — se
+ * a participante voltar até q01 e escolher outra opção, a próxima vez
+ * que passar pela posição 11 verá a outra variante automaticamente.
+ */
+function resolveQuestionAt(
+  index: number,
+  respostas: Record<string, string>,
+): DemoQuestion {
+  if (index === 0) return DEMO_Q01;
+  if (index < INDICE_Q12) return DEMO_QUESTIONS_MEIO[index - 1];
+  if (index === INDICE_Q12) {
+    const respostaQ01 = respostas[DEMO_Q01.id];
+    const opcao = DEMO_Q01.opcoes.find((o) => o.id === respostaQ01);
+    return opcao?.perfilMoradia === "sozinha" ? DEMO_Q12A : DEMO_Q12B;
+  }
+  return DEMO_QUESTIONS_FIM[index - INDICE_Q12 - 1];
+}
 
 type Step =
   | { kind: "question"; index: number }
@@ -31,24 +60,30 @@ type Step =
   | { kind: "result" }
   | { kind: "feedback" };
 
-function buildSteps(): Step[] {
-  const steps: Step[] = [];
-  for (let i = 0; i < TOTAL_QUESTIONS; i += 1) {
-    steps.push({ kind: "question", index: i });
+type TelaFinal = Exclude<Step["kind"], "question">;
+
+const TELAS_FINAIS: TelaFinal[] = [
+  "processing",
+  "map-preview",
+  "intention",
+  "bridge",
+  "map-ready",
+  "capture",
+  "result",
+  "feedback",
+];
+
+function stepAt(stepIndex: number): Step {
+  if (stepIndex <= ULTIMO_INDICE_PERGUNTA) {
+    return { kind: "question", index: stepIndex };
   }
-  steps.push({ kind: "processing" });
-  steps.push({ kind: "map-preview" });
-  steps.push({ kind: "intention" });
-  steps.push({ kind: "bridge" });
-  steps.push({ kind: "map-ready" });
-  steps.push({ kind: "capture" });
-  steps.push({ kind: "result" });
-  steps.push({ kind: "feedback" });
-  return steps;
+  const posAposPerguntas = stepIndex - (ULTIMO_INDICE_PERGUNTA + 1);
+  const kind = TELAS_FINAIS[posAposPerguntas] ?? "feedback";
+  return { kind };
 }
 
-const STEPS = buildSteps();
-const CAPTURE_STEP_INDEX = STEPS.findIndex((s) => s.kind === "capture");
+const TOTAL_STEPS = ULTIMO_INDICE_PERGUNTA + 1 + 8; // 15 perguntas + 8 telas
+const CAPTURE_STEP_INDEX = ULTIMO_INDICE_PERGUNTA + 1 + 5; // processing,map-preview,intention,bridge,map-ready,capture
 
 /**
  * Máquina de estado do fluxo do quiz — inteiramente client-side, sem
@@ -63,10 +98,10 @@ export function QuizFlow() {
   const [intencao, setIntencao] = useState<Intencao | null>(null);
   const [captura, setCaptura] = useState<CaptureData | null>(null);
 
-  const step = STEPS[stepIndex];
+  const step = stepAt(stepIndex);
 
   const goNext = useCallback(() => {
-    setStepIndex((i) => Math.min(i + 1, STEPS.length - 1));
+    setStepIndex((i) => Math.min(i + 1, TOTAL_STEPS - 1));
   }, []);
 
   const goBack = useCallback(() => {
@@ -92,13 +127,13 @@ export function QuizFlow() {
 
   switch (step.kind) {
     case "question": {
-      const questao = DEMO_QUESTIONS[step.index];
+      const questao = resolveQuestionAt(step.index, respostas);
       return shell(
         <QuestionScreen
           key={questao.id}
           question={questao}
           numero={step.index + 1}
-          total={TOTAL_QUESTIONS}
+          total={DEMO_TOTAL_PERGUNTAS}
           onAnswer={(opcaoId) => {
             setRespostas((prev) => ({ ...prev, [questao.id]: opcaoId }));
             goNext();
@@ -138,8 +173,6 @@ export function QuizFlow() {
           forca={DEMO_DIMENSOES.forca}
           atencao={DEMO_DIMENSOES.atencao}
           complementar={DEMO_DIMENSOES.complementar}
-          respondidas={Object.keys(respostas).length}
-          total={TOTAL_QUESTIONS}
           intencao={intencao}
           onContinue={goNext}
         />,

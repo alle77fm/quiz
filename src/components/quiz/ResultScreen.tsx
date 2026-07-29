@@ -12,16 +12,17 @@ type ResultScreenProps = {
   forca: string;
   atencao: string;
   complementar: string;
-  respondidas: number;
-  total: number;
   intencao: Intencao | null;
   onContinue: () => void;
 };
 
 /**
- * Tela 7 — Resultado (demonstrativo). Estrutura apenas: cada bloco de
- * texto se autodescreve como exemplo, para não se passar por conteúdo
- * final da psicóloga (docs/REPORT_COMPOSER.md ainda não implementado).
+ * Tela 7 — Resultado. Estrutura de homologação: os textos abaixo de
+ * cada bloco são neutros e estruturais, não conteúdo aprovado pela
+ * Jeruska (docs/REPORT_COMPOSER.md ainda não implementado). O
+ * isolamento entre homologação e conteúdo oficial vive no código
+ * (ver src/config/quiz/v1/homologacao/), não na tela — nada aqui se
+ * anuncia como demonstração para quem está participando.
  */
 export function ResultScreen({
   nome,
@@ -29,8 +30,6 @@ export function ResultScreen({
   forca,
   atencao,
   complementar,
-  respondidas,
-  total,
   intencao,
   onContinue,
 }: ResultScreenProps) {
@@ -38,7 +37,7 @@ export function ResultScreen({
     <div className="flex flex-col gap-6">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber">
-          Resultado demonstrativo · {respondidas}/{total} respostas
+          Seu mapa
         </p>
         <h1 className="font-display text-2xl font-extrabold leading-tight text-cream sm:text-3xl">
           {nome ? `${nome}, seu mapa` : "Seu mapa"}: {mapa}
@@ -56,8 +55,8 @@ export function ResultScreen({
             Força predominante — {forca}
           </p>
           <p className="mt-1 text-sm text-muted">
-            Bloco de exemplo. No relatório final, este espaço traz uma
-            reflexão personalizada sobre esta força, escrita pela Jeruska.
+            Um espaço para observar o que aparece com mais presença no seu
+            percurso.
           </p>
         </div>
 
@@ -66,8 +65,7 @@ export function ResultScreen({
             Ponto de atenção — {atencao}
           </p>
           <p className="mt-1 text-sm text-muted">
-            Bloco de exemplo. No relatório final, este espaço traz uma
-            reflexão sobre o que pode merecer mais atenção agora.
+            Um tema que talvez valha observar com mais cuidado agora.
           </p>
         </div>
 
@@ -76,16 +74,10 @@ export function ResultScreen({
             Dimensão complementar — {complementar}
           </p>
           <p className="mt-1 text-sm text-muted">
-            Bloco de exemplo. No relatório final, este espaço complementa a
-            leitura anterior sem repeti-la.
+            Um outro ângulo do seu percurso, complementar ao anterior.
           </p>
         </div>
       </div>
-
-      <p className="text-xs text-muted">
-        Este resultado é uma demonstração de estrutura — nenhum conteúdo
-        aqui foi escrito pela psicóloga.
-      </p>
 
       <button
         type="button"

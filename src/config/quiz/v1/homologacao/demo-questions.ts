@@ -1,21 +1,32 @@
 /**
- * Dados DEMONSTRATIVOS para viabilizar a navegação do quiz antes da
- * matriz oficial da Jeruska.
+ * DADOS EXCLUSIVOS DE HOMOLOGAÇÃO — não é a configuração oficial.
+ *
+ * Este arquivo existe só para viabilizar a navegação do quiz antes da
+ * matriz oficial da Jeruska. A configuração oficial (ainda incompleta)
+ * vive em `src/config/quiz/v1/questions.ts` — quando ela estiver
+ * completa, este arquivo deixa de ser importado e pode ser removido.
  *
  * O TEXTO das 15 perguntas e o nome dos cômodos são os já aprovados em
  * docs/QUIZ_CONTENT.md (seção 5.6 da especificação original) — não
- * foram inventados aqui.
+ * foram inventados aqui. Os enunciados de q12a/q12b também refletem a
+ * pergunta aprovada, apenas ajustados ao contexto de cada variante.
  *
- * As ALTERNATIVAS abaixo são estrutura de demonstração, não conteúdo
+ * As ALTERNATIVAS abaixo são estrutura de homologação, não conteúdo
  * final: não têm peso, não pontuam para nenhuma dimensão, e não devem
  * ser tratadas como redação da psicóloga. Serão substituídas
  * integralmente pela matriz oficial (docs/SCORING_MATRIX.md,
  * docs/QUIZ_CONTENT.md) antes do lançamento.
+ *
+ * Nenhum destes textos deve aparecer marcado como aprovado em nenhum
+ * outro lugar do código.
  */
 
 export type DemoOption = {
   id: string;
   label: string;
+  /** Presente apenas nas alternativas de q01 — usado para decidir a
+   * bifurcação estrutural q12a/q12b (docs/QUIZ_CONTENT.md §6). */
+  perfilMoradia?: "sozinha" | "acompanhada";
 };
 
 export type DemoQuestion = {
@@ -32,18 +43,20 @@ const escalaPadrao: DemoOption[] = [
   { id: "quase-nunca", label: "Quase nunca" },
 ];
 
-export const DEMO_QUESTIONS: DemoQuestion[] = [
-  {
-    id: "q01",
-    comodo: "Contexto",
-    texto: "Com quem você mora atualmente?",
-    opcoes: [
-      { id: "so", label: "Vivo só" },
-      { id: "parceiro", label: "Vivo com parceiro(a)" },
-      { id: "familia", label: "Vivo com família" },
-      { id: "outras", label: "Vivo com outras pessoas" },
-    ],
-  },
+export const DEMO_Q01: DemoQuestion = {
+  id: "q01",
+  comodo: "Contexto",
+  texto: "Com quem você mora atualmente?",
+  opcoes: [
+    { id: "so", label: "Vivo só", perfilMoradia: "sozinha" },
+    { id: "parceiro", label: "Vivo com parceiro(a)", perfilMoradia: "acompanhada" },
+    { id: "familia", label: "Vivo com família", perfilMoradia: "acompanhada" },
+    { id: "outras", label: "Vivo com outras pessoas", perfilMoradia: "acompanhada" },
+  ],
+};
+
+/** q02–q11, ordem fixa — nenhuma depende da resposta de q01. */
+export const DEMO_QUESTIONS_MEIO: DemoQuestion[] = [
   {
     id: "q02",
     comodo: "Contexto",
@@ -119,17 +132,35 @@ export const DEMO_QUESTIONS: DemoQuestion[] = [
     texto: "Você consegue parar sem sentir culpa?",
     opcoes: escalaPadrao,
   },
-  {
-    id: "q12",
-    comodo: "Quarto",
-    texto: "Como percebe a proximidade emocional em sua vida?",
-    opcoes: [
-      { id: "muito-proxima", label: "Muito próxima" },
-      { id: "razoavel", label: "Razoavelmente próxima" },
-      { id: "distante", label: "Distante" },
-      { id: "muito-distante", label: "Muito distante" },
-    ],
-  },
+];
+
+/** Bifurcação estrutural real: apenas uma das duas aparece por percurso. */
+export const DEMO_Q12A: DemoQuestion = {
+  id: "q12a",
+  comodo: "Quarto",
+  texto: "Morando só, como você percebe a proximidade emocional na sua vida hoje?",
+  opcoes: [
+    { id: "muito-proxima", label: "Muito próxima" },
+    { id: "razoavel", label: "Razoavelmente próxima" },
+    { id: "distante", label: "Distante" },
+    { id: "muito-distante", label: "Muito distante" },
+  ],
+};
+
+export const DEMO_Q12B: DemoQuestion = {
+  id: "q12b",
+  comodo: "Quarto",
+  texto: "Nas relações da sua casa, como percebe a proximidade emocional hoje?",
+  opcoes: [
+    { id: "muito-proxima", label: "Muito próxima" },
+    { id: "razoavel", label: "Razoavelmente próxima" },
+    { id: "distante", label: "Distante" },
+    { id: "muito-distante", label: "Muito distante" },
+  ],
+};
+
+/** q13–q15, ordem fixa. */
+export const DEMO_QUESTIONS_FIM: DemoQuestion[] = [
   {
     id: "q13",
     comodo: "Espaço pessoal",
@@ -160,6 +191,8 @@ export const DEMO_QUESTIONS: DemoQuestion[] = [
     ],
   },
 ];
+
+export const DEMO_TOTAL_PERGUNTAS = 15;
 
 /** Nomes de mapa já fechados em docs/SCORING_MATRIX.md §1 — apenas o
  * identificador estrutural, sem descrição de conteúdo. */

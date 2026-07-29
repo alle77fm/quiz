@@ -1,4 +1,4 @@
-import type { DemoQuestion } from "@/config/quiz/v1/demo-questions";
+import type { DemoQuestion } from "@/config/quiz/v1/homologacao/demo-questions";
 
 type QuestionScreenProps = {
   question: DemoQuestion;
