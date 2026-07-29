@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/*
+  Paleta derivada de LogoPrincipal.png (lótus dourado) e id_visual.png
+  (fundo escuro quente, dourado metálico, creme).
+  Não reproduz foto, nome ou registro profissional presentes em
+  id_visual.png — apenas cor, tipografia e registro visual.
+*/
+:root {
+  --color-ink: #1c150e;
+  --color-ink-soft: #2a2018;
+  --color-canvas: #f8f2e7;
+  --color-canvas-soft: #efe6d3;
+  --color-gold: #c9a24b;
+  --color-gold-deep: #8f6f2e;
+  --color-gold-soft: #e6d3a0;
+  --color-cream: #f6efe1;
+
+  --background: var(--color-canvas);
+  --foreground: var(--color-ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-canvas: var(--color-canvas);
+  --color-canvas-soft: var(--color-canvas-soft);
+  --color-gold: var(--color-gold);
+  --color-gold-deep: var(--color-gold-deep);
+  --color-gold-soft: var(--color-gold-soft);
+  --color-cream: var(--color-cream);
+  --font-display: var(--font-playfair);
+  --font-body: var(--font-inter);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
