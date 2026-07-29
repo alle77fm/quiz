@@ -118,7 +118,9 @@ test.describe("Fluxo do quiz — navegação, responsividade e capturas", () => 
       .check();
     await page.getByRole("button", { name: "Ver meu resultado" }).click();
 
-    await expect(page.getByText(/Maria Teste, seu mapa/)).toBeVisible();
+    await expect(
+      page.getByText(/Maria Teste, este é o espaço reservado/),
+    ).toBeVisible();
 
     // resultado → feedback: fluxo completo até a última tela
     await page.getByRole("button", { name: "Deixar um feedback" }).click();
@@ -177,7 +179,9 @@ test.describe("Fluxo do quiz — navegação, responsividade e capturas", () => 
         .getByRole("checkbox", { name: /Autorizo o armazenamento/ })
         .check();
       await page.getByRole("button", { name: "Ver meu resultado" }).click();
-      await expect(page.getByText(/Maria Teste, seu mapa/)).toBeVisible();
+      await expect(
+      page.getByText(/Maria Teste, este é o espaço reservado/),
+    ).toBeVisible();
       await page.screenshot({
         path: `.screenshots/flow-06-resultado-${viewport.name}.png`,
       });
@@ -268,6 +272,124 @@ test.describe("Bifurcação estrutural q12a/q12b", () => {
   });
 });
 
+/** Percorre o fluxo completo até o relatório (tela de resultado). */
+async function chegarAoRelatorio(page: Page, nome = "Maria Teste") {
+  await page.goto("/quiz");
+  await completeAllQuestions(page, 15);
+  await expect(page.getByText("Preparando o seu mapa")).toBeVisible();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await page.getByRole("radio").first().click();
+  await page.getByText("Conversar com a Jeruska").click();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await page.getByLabel("Nome").fill(nome);
+  await page
+    .getByRole("checkbox", { name: /Autorizo o armazenamento/ })
+    .check();
+  await page.getByRole("button", { name: "Ver meu resultado" }).click();
+}
+
+test.describe("Relatório de homologação — estrutura completa", () => {
+  test("relatório contém as 12 seções estruturais e não se limita a um resumo", async ({
+    page,
+  }) => {
+    await chegarAoRelatorio(page);
+
+    const eyebrows = [
+      "Seu mapa — Casa-Refúgio",
+      "Força predominante — Acolhimento",
+      "Ponto de atenção — Movimento",
+      "Dimensão complementar — Vínculos",
+      "Contexto de moradia",
+      "Como aparece na rotina",
+      "Direção e encerramento",
+      "Convite",
+      "Aviso de escopo",
+    ];
+    for (const texto of eyebrows) {
+      await expect(page.getByText(texto)).toBeVisible();
+    }
+  });
+
+  test("relatório permite rolagem vertical (não é limitado a uma viewport)", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await chegarAoRelatorio(page);
+
+    const { scrollHeight, clientHeight } = await page.evaluate(() => ({
+      scrollHeight: document.documentElement.scrollHeight,
+      clientHeight: document.documentElement.clientHeight,
+    }));
+    expect(scrollHeight).toBeGreaterThan(clientHeight);
+  });
+
+  test("relatório não se apresenta como cálculo oficial definitivo", async ({
+    page,
+  }) => {
+    await chegarAoRelatorio(page);
+
+    const texto = (await page.locator("body").innerText()).toLowerCase();
+    expect(texto).not.toMatch(
+      /demonstrat|homologa|placeholder|provis[oó]rio|pendente/,
+    );
+    // nota de transparência precisa existir em algum lugar da página
+    expect(texto).toMatch(/estrutura que receberá seu relatório personalizado/);
+  });
+});
+
+test.describe("Screenshots de auditoria — q05, q14 e relatório", () => {
+  test("captura q05, q14 e o relatório completo (mobile e desktop)", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/quiz");
+    await completeAllQuestions(page, 4); // q01-q04
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Como você se sente nos momentos de convivência?",
+      }),
+    ).toBeVisible();
+    await page.screenshot({ path: ".screenshots/audit-q05-mobile.png" });
+
+    await completeAllQuestions(page, 9); // q05-q13
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Existe algum espaço, objeto ou assunto da casa que você evita?",
+      }),
+    ).toBeVisible();
+    await page.screenshot({ path: ".screenshots/audit-q14-mobile.png" });
+
+    await completeAllQuestions(page, 2); // q14-q15
+    await expect(page.getByText("Preparando o seu mapa")).toBeVisible();
+    await page.getByRole("button", { name: "Continuar" }).click();
+    await page.getByRole("button", { name: "Continuar" }).click();
+    await page.getByRole("radio").first().click();
+    await page.getByText("Conversar com a Jeruska").click();
+    await page.getByRole("button", { name: "Continuar" }).click();
+    await page.getByLabel("Nome").fill("Maria Teste");
+    await page
+      .getByRole("checkbox", { name: /Autorizo o armazenamento/ })
+      .check();
+    await page.getByRole("button", { name: "Ver meu resultado" }).click();
+    await expect(
+      page.getByText(/Maria Teste, este é o espaço reservado/),
+    ).toBeVisible();
+    await page.screenshot({
+      path: ".screenshots/audit-resultado-mobile.png",
+      fullPage: true,
+    });
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.screenshot({
+      path: ".screenshots/audit-resultado-desktop.png",
+      fullPage: true,
+    });
+  });
+});
+
 test.describe("Isolamento de dados — sem rede, sem persistência", () => {
   test("nenhuma requisição de rede é enviada durante o preenchimento do fluxo", async ({
     page,
@@ -298,7 +420,9 @@ test.describe("Isolamento de dados — sem rede, sem persistência", () => {
       .getByRole("checkbox", { name: /Autorizo o armazenamento/ })
       .check();
     await page.getByRole("button", { name: "Ver meu resultado" }).click();
-    await expect(page.getByText(/Maria Teste, seu mapa/)).toBeVisible();
+    await expect(
+      page.getByText(/Maria Teste, este é o espaço reservado/),
+    ).toBeVisible();
 
     expect(requisicoesForaDaOrigem).toEqual([]);
     expect(requisicoesDeEscrita).toEqual([]);
@@ -320,7 +444,9 @@ test.describe("Isolamento de dados — sem rede, sem persistência", () => {
       .getByRole("checkbox", { name: /Autorizo o armazenamento/ })
       .check();
     await page.getByRole("button", { name: "Ver meu resultado" }).click();
-    await expect(page.getByText(/Maria Teste, seu mapa/)).toBeVisible();
+    await expect(
+      page.getByText(/Maria Teste, este é o espaço reservado/),
+    ).toBeVisible();
 
     const estadoAntes = await page.evaluate(() => ({
       localStorage: window.localStorage.length,

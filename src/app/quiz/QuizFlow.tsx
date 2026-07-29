@@ -10,7 +10,7 @@ import { IntentionScreen, type Intencao } from "@/components/quiz/IntentionScree
 import { BridgeScreen } from "@/components/quiz/BridgeScreen";
 import { MapReadyScreen } from "@/components/quiz/MapReadyScreen";
 import { CaptureScreen, type CaptureData } from "@/components/quiz/CaptureScreen";
-import { ResultScreen } from "@/components/quiz/ResultScreen";
+import { ReportScreen } from "@/components/quiz/ReportScreen";
 import { FeedbackScreen } from "@/components/quiz/FeedbackScreen";
 import {
   DEMO_DIMENSOES,
@@ -23,6 +23,15 @@ import {
   DEMO_TOTAL_PERGUNTAS,
   type DemoQuestion,
 } from "@/config/quiz/v1/homologacao/demo-questions";
+import { construirEcosHomologacao } from "@/config/quiz/v1/homologacao/report-homologacao";
+
+const TODAS_PERGUNTAS: DemoQuestion[] = [
+  DEMO_Q01,
+  ...DEMO_QUESTIONS_MEIO,
+  DEMO_Q12A,
+  DEMO_Q12B,
+  ...DEMO_QUESTIONS_FIM,
+];
 
 const ULTIMO_INDICE_PERGUNTA = DEMO_TOTAL_PERGUNTAS - 1; // 0-14
 const INDICE_Q12 = 11; // 12ª pergunta (q01=0 ... q11=10, q12=11, q13..q15=12-14)
@@ -165,18 +174,26 @@ export function QuizFlow() {
         setCaptura(data);
         goNext();
       }} />);
-    case "result":
-      return shell(
-        <ResultScreen
-          nome={captura?.nome ?? ""}
-          mapa={DEMO_MAPA_PRINCIPAL}
-          forca={DEMO_DIMENSOES.forca}
-          atencao={DEMO_DIMENSOES.atencao}
-          complementar={DEMO_DIMENSOES.complementar}
-          intencao={intencao}
-          onContinue={goNext}
-        />,
+    case "result": {
+      const opcaoQ01 = DEMO_Q01.opcoes.find((o) => o.id === respostas[DEMO_Q01.id]);
+      const contextoMoradia = opcaoQ01?.perfilMoradia ?? "acompanhada";
+      const ecos = construirEcosHomologacao(respostas, TODAS_PERGUNTAS);
+      return (
+        <QuizShell wide>
+          <ReportScreen
+            nome={captura?.nome ?? ""}
+            mapa={DEMO_MAPA_PRINCIPAL}
+            forca={DEMO_DIMENSOES.forca}
+            atencao={DEMO_DIMENSOES.atencao}
+            complementar={DEMO_DIMENSOES.complementar}
+            contextoMoradia={contextoMoradia}
+            ecos={ecos}
+            intencao={intencao}
+            onContinue={goNext}
+          />
+        </QuizShell>
       );
+    }
     case "feedback":
       return shell(<FeedbackScreen />);
     default:

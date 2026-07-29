@@ -5,6 +5,9 @@ import { ProgressBar } from "@/components/quiz/ProgressBar";
 type QuizShellProps = {
   onBack?: () => void;
   progressPercent?: number;
+  /** Telas de conteúdo longo (ex.: relatório) usam largura de leitura
+   * maior e não centralizam verticalmente — o conteúdo rola normalmente. */
+  wide?: boolean;
   children: ReactNode;
 };
 
@@ -13,7 +16,7 @@ type QuizShellProps = {
  * voltar + barra de progresso (quando aplicável) e área de conteúdo
  * centralizada. Mantém o mesmo registro visual dark/gold da home.
  */
-export function QuizShell({ onBack, progressPercent, children }: QuizShellProps) {
+export function QuizShell({ onBack, progressPercent, wide, children }: QuizShellProps) {
   return (
     <div className="flex min-h-[100svh] flex-col bg-ink text-cream">
       <header className="flex items-center gap-4 px-5 pb-3 pt-4 sm:px-8">
@@ -29,8 +32,16 @@ export function QuizShell({ onBack, progressPercent, children }: QuizShellProps)
         </div>
       </header>
 
-      <main className="flex flex-1 flex-col px-5 pb-8 pt-6 sm:px-8 sm:pt-10 lg:justify-center lg:pt-8">
-        <div className="mx-auto flex w-full max-w-lg flex-col gap-5">
+      <main
+        className={`flex flex-1 flex-col px-5 pb-8 pt-6 sm:px-8 sm:pt-10 lg:pt-8 ${
+          wide ? "" : "lg:justify-center"
+        }`}
+      >
+        <div
+          className={`mx-auto flex w-full flex-col gap-5 ${
+            wide ? "max-w-[820px] gap-8" : "max-w-lg"
+          }`}
+        >
           {children}
         </div>
       </main>

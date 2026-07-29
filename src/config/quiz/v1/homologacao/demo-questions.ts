@@ -84,7 +84,15 @@ export const DEMO_QUESTIONS_MEIO: DemoQuestion[] = [
     id: "q05",
     comodo: "Sala",
     texto: "Como você se sente nos momentos de convivência?",
-    opcoes: escalaPadrao,
+    // Escala própria (não escalaPadrao): a pergunta pede um estado, não uma
+    // frequência — reaproveitar a escala de frequência aqui respondia
+    // gramaticalmente errado ao enunciado.
+    opcoes: [
+      { id: "muito-a-vontade", label: "Muito à vontade" },
+      { id: "confortavel-maior-parte", label: "Na maior parte do tempo, confortável" },
+      { id: "pouco-desconfortavel", label: "Um pouco desconfortável" },
+      { id: "frequentemente-desconfortavel", label: "Frequentemente desconfortável" },
+    ],
   },
   {
     id: "q06",
@@ -171,11 +179,15 @@ export const DEMO_QUESTIONS_FIM: DemoQuestion[] = [
     id: "q14",
     comodo: "Espaço pessoal",
     texto: "Existe algum espaço, objeto ou assunto da casa que você evita?",
+    // Escala corrigida: as quatro alternativas usam o mesmo critério
+    // (categoria do que é evitado), sem misturar com frequência, e cobrem
+    // as três categorias citadas no enunciado ("espaço, objeto ou
+    // assunto") mais a ausência de evitação.
     opcoes: [
-      { id: "espaco", label: "Sim, um espaço" },
-      { id: "assunto", label: "Sim, um assunto" },
-      { id: "as-vezes", label: "Às vezes" },
-      { id: "nao", label: "Não" },
+      { id: "espaco", label: "Evito principalmente um espaço" },
+      { id: "objeto", label: "Evito principalmente um objeto" },
+      { id: "assunto", label: "Evito principalmente um assunto" },
+      { id: "nenhum", label: "Não percebo algo que evite" },
     ],
   },
   {

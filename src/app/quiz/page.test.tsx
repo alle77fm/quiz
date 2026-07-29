@@ -148,6 +148,37 @@ describe("/quiz — fluxo navegável (estrutura de homologação)", () => {
   it("nenhum rótulo de demonstração aparece na experiência", () => {
     render(<QuizFlow />);
     const texto = (document.body.textContent ?? "").toLowerCase();
-    expect(texto).not.toMatch(/demonstrat|placeholder|provis[oó]rio/);
+    expect(texto).not.toMatch(/demonstrat|homologa|placeholder|provis[oó]rio|pendente/);
+  });
+});
+
+describe("q05 e q14 — alternativas corrigidas", () => {
+  it('q05 não usa mais a escala genérica de frequência ("Sim, sempre")', () => {
+    const q05 = DEMO_QUESTIONS_MEIO.find((q) => q.id === "q05")!;
+    const labels = q05.opcoes.map((o) => o.label);
+    expect(labels).not.toContain("Sim, sempre");
+  });
+
+  it("q05 usa uma escala de estado/conforto compatível com 'como você se sente'", () => {
+    const q05 = DEMO_QUESTIONS_MEIO.find((q) => q.id === "q05")!;
+    const labels = q05.opcoes.map((o) => o.label);
+    expect(labels).toEqual([
+      "Muito à vontade",
+      "Na maior parte do tempo, confortável",
+      "Um pouco desconfortável",
+      "Frequentemente desconfortável",
+    ]);
+  });
+
+  it("q14 cobre espaço, objeto, assunto e ausência de evitação, sem misturar frequência", () => {
+    const q14 = DEMO_QUESTIONS_FIM.find((q) => q.id === "q14")!;
+    const labels = q14.opcoes.map((o) => o.label);
+    expect(labels).toEqual([
+      "Evito principalmente um espaço",
+      "Evito principalmente um objeto",
+      "Evito principalmente um assunto",
+      "Não percebo algo que evite",
+    ]);
+    expect(labels).not.toContain("Às vezes");
   });
 });
