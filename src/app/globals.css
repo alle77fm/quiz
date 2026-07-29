@@ -9,7 +9,7 @@
 :root {
   --color-ink: #0b0a08;
   --color-ink-soft: #15120f;
-  --color-ink-warm: #211910;
+  --color-ink-warm: #1f190f;
   --color-gold: #c89645;
   --color-amber: #d7a654;
   --color-bronze: #775522;
@@ -35,8 +35,8 @@
   --color-muted: var(--color-muted);
   --color-olive: var(--color-olive);
   --color-olive-deep: var(--color-olive-deep);
-  --font-display: var(--font-inter);
-  --font-body: var(--font-inter);
+  --font-display: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {

@@ -1,8 +1,14 @@
-import { Inter } from "next/font/google";
+import { DM_Sans, Inter } from "next/font/google";
 import "./globals.css";
 
 export { metadata } from "./metadata";
 
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["700", "800"],
+});
 
 const inter = Inter({
   variable: "--font-inter",
@@ -17,7 +23,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={`${inter.variable} antialiased`}>{children}</body>
+      <body className={`${dmSans.variable} ${inter.variable} antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }

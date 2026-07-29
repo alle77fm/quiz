@@ -32,11 +32,11 @@ export function HeroArtwork({ marca, assinatura }: HeroArtworkProps) {
       </div>
 
       <div className="w-full bg-ink lg:hidden">
-        <div className="flex justify-center border-b border-cream/10 px-6 py-5">
-          <BrandLockup marca={marca} assinatura={assinatura} align="center" />
+        <div className="flex justify-center px-6 pb-2 pt-3">
+          <BrandLockup marca={marca} assinatura={assinatura} align="center" compact />
         </div>
 
-        <div className="relative h-[38vh] min-h-[260px] max-h-[330px] w-full overflow-hidden">
+        <div className="relative mx-4 h-[22vh] max-h-[190px] min-h-[150px] overflow-hidden rounded-2xl">
           <Image
             src="/hero-mobile.png"
             alt=""
@@ -46,7 +46,8 @@ export function HeroArtwork({ marca, assinatura }: HeroArtworkProps) {
             sizes="100vw"
             className="object-cover object-[center_38%]"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-ink/10 via-transparent to-ink" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/10 via-transparent to-ink/25" />
+          <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gold/25" />
         </div>
       </div>
     </>

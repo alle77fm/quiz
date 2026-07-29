@@ -3,6 +3,8 @@ import { test, expect } from "@playwright/test";
 const VIEWPORTS = [
   { name: "mobile-360x800", width: 360, height: 800 },
   { name: "mobile-390x844", width: 390, height: 844 },
+  { name: "mobile-430x932", width: 430, height: 932 },
+  { name: "desktop-1366x768", width: 1366, height: 768 },
   { name: "desktop-1440x900", width: 1440, height: 900 },
   { name: "desktop-1920x1080", width: 1920, height: 1080 },
 ] as const;
@@ -97,15 +99,14 @@ test.describe("Tela 0 — verificação visual e de console (redesign dark/gold)
     await expect(page.locator("main").getByText("Casa com Alma")).toBeVisible();
   });
 
-  test("CTA navega para /quiz sem chamada de rede nem storage", async ({
+  test("CTA navega para /quiz e inicia a primeira pergunta, sem storage", async ({
     page,
   }) => {
     await page.goto("/");
     await page.getByRole("link", { name: "Entrar na experiência" }).click();
     await expect(page).toHaveURL(/\/quiz$/);
-    await expect(
-      page.getByText("Esta etapa está sendo preparada"),
-    ).toBeVisible();
+    await expect(page.getByRole("progressbar")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
     const storageState = await page.evaluate(() => ({
       localStorage: window.localStorage.length,

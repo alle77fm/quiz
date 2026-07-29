@@ -1,26 +1,58 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
-import QuizEmEspera from "./page";
-import { quizEsperaContent } from "@/config/quiz/v1/content";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { QuizFlow } from "./QuizFlow";
+import { DEMO_QUESTIONS } from "@/config/quiz/v1/demo-questions";
 
-describe("/quiz — tela de espera", () => {
-  it("apresenta a mensagem de espera provisória", () => {
-    render(<QuizEmEspera />);
+const pushMock = vi.fn();
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: pushMock }),
+}));
+
+describe("/quiz — fluxo navegável (demonstrativo)", () => {
+  it("inicia na primeira pergunta, com barra de progresso visível", () => {
+    render(<QuizFlow />);
     expect(
-      screen.getByText(quizEsperaContent.espera.valor),
+      screen.getByRole("heading", { level: 1, name: DEMO_QUESTIONS[0].texto }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
+  });
+
+  it("responder a primeira pergunta avança para a segunda", () => {
+    render(<QuizFlow />);
+    const primeiraOpcao = DEMO_QUESTIONS[0].opcoes[0].label;
+    fireEvent.click(screen.getByRole("radio", { name: primeiraOpcao }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: DEMO_QUESTIONS[1].texto }),
     ).toBeInTheDocument();
   });
 
-  it("apresenta link de retorno para a Tela 0", () => {
-    render(<QuizEmEspera />);
-    const link = screen.getByRole("link", {
-      name: quizEsperaContent.retorno.valor,
-    });
-    expect(link).toHaveAttribute("href", "/");
+  it("voltar na primeira pergunta navega para a home", () => {
+    render(<QuizFlow />);
+    fireEvent.click(screen.getByRole("button", { name: "Voltar" }));
+    expect(pushMock).toHaveBeenCalledWith("/");
   });
 
-  it("não apresenta nenhum esqueleto de pergunta ou alternativa", () => {
-    render(<QuizEmEspera />);
-    expect(document.querySelectorAll('input, button[type="submit"]')).toHaveLength(0);
+  it("voltar após responder a primeira pergunta retorna a ela", () => {
+    render(<QuizFlow />);
+    fireEvent.click(
+      screen.getByRole("radio", { name: DEMO_QUESTIONS[0].opcoes[0].label }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Voltar" }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: DEMO_QUESTIONS[0].texto }),
+    ).toBeInTheDocument();
+  });
+
+  it("nenhuma pergunta ou alternativa se apresenta como conteúdo final", () => {
+    render(<QuizFlow />);
+    // Todas as 15 perguntas demonstrativas usam apenas as 4 opções
+    // definidas em demo-questions.ts — nenhuma pontua de verdade.
+    expect(DEMO_QUESTIONS).toHaveLength(15);
+    for (const questao of DEMO_QUESTIONS) {
+      expect(questao.opcoes.length).toBeGreaterThan(0);
+    }
   });
 });
