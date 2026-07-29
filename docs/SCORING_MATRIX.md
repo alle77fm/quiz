@@ -49,6 +49,59 @@ escrita** (ver `CONTENT_KIT.md` §0) — sem elas, nenhum peso pode ser atribuí
 Toda definição deve obedecer à restrição fechada do §7: as seis dimensões são
 positivamente orientadas, sem exceção.
 
+**Redação provisória — não validada**
+
+Redigido por Alexandre a partir do posicionamento público da profissional, para
+permitir o planejamento da cobertura e da distribuição de pesos. Não constitui
+validação clínica. Será substituído pela redação da psicóloga.
+
+**ACOLHIMENTO** — Acolhimento representa a presença de segurança, escuta e
+conforto nas relações e nos espaços da casa, permitindo viver e se expressar com
+mais tranquilidade.
+
+**LIMITES** — Limites representam a capacidade de reconhecer, comunicar e
+preservar necessidades, tempo, espaço e escolhas pessoais com clareza e respeito
+mútuo.
+
+**AUTOCUIDADO** — Autocuidado representa a capacidade de incluir descanso, atenção
+às próprias necessidades e recuperação de energia como partes legítimas da rotina.
+
+**VÍNCULOS** — Vínculos representam a qualidade da presença, da confiança e da
+conexão emocional construída nas relações que fazem parte da vida cotidiana.
+
+**RECIPROCIDADE** — Reciprocidade representa o equilíbrio na circulação de
+cuidado, escuta, responsabilidades e apoio entre as pessoas que compartilham
+relações e rotina.
+
+**MOVIMENTO** — Movimento representa a capacidade de transformar percepção em
+pequenos passos conscientes, fortalecendo vitalidade, autonomia e abertura para
+mudanças possíveis.
+
+As seis são positivamente orientadas: score alto significa maior presença
+percebida do recurso. A ratificação dimensão por dimensão continua
+`[PENDENTE · JERUSKA]` e continua no Grupo A (`CONTENT_KIT.md` §8).
+
+#### Questões para a validação
+
+1. **Localização.** Três definições localizam a dimensão na pessoa (`limites`,
+   `autocuidado`, `movimento` usam "a capacidade de"); três localizam nas relações
+   e espaços (`acolhimento`, `vinculos`, `reciprocidade`). Consequência: quando a
+   dimensão é capacidade da pessoa, score baixo descreve algo que ela não tem, o
+   que se aproxima de atribuição de traço, proibida em `LANGUAGE_RULES.md`. As seis
+   precisam se localizar no mesmo lugar.
+2. **Direcionalidade de `movimento`.** Não está fechada por estas definições. A
+   pergunta é se, no enquadramento da profissional, mais movimento é sempre
+   melhor.
+3. A definição de `movimento` descreve um mecanismo, não um eixo de pontuação. É a
+   mais provável de ser reescrita.
+
+#### Uso permitido
+
+Estas definições provisórias permitem planejar cobertura, esboçar a tabela
+pergunta → dimensão e discutir os pares mapa → eixo. **Não autorizam** preencher
+pesos concretos, alternativas, `reportEcho`, blocos de relatório, critérios dos
+níveis de apoio ou textos de tela.
+
 ## 2. Contribuição de perguntas para dimensões
 
 Tabela-formato (não preenchida — qual peso vai para qual dimensão é decisão de
