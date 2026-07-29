@@ -182,3 +182,106 @@ describe("q05 e q14 — alternativas corrigidas", () => {
     expect(labels).not.toContain("Às vezes");
   });
 });
+
+/** Padrões de flexão de gênero fixa dirigidos à participante — não
+ * confundir com palavras legítimas referindo-se a objetos/espaços
+ * (ex.: "espaço seguro", "porta aberta"). */
+const PADROES_GENERO_FIXO = [
+  /voc[eê]\s+est[aá]\s+pront[ao]\b/i,
+  /estou\s+pront[ao]\b/i,
+  /voc[eê]\s+se\s+sente\s+acolhid[ao]\b/i,
+  /voc[eê]\s+chega\s+at[ée]\s+aqui\s+pront[ao]\b/i,
+  /bem-vind[ao]\b/i,
+  /obrigad[ao]\s+por\s+participar/i,
+  /\bobrigad[ao]\.\s*$/im,
+  /vivo com parceiro\(a\)/i,
+];
+
+function textoSemFlexaoDeGenero() {
+  const texto = document.body.textContent ?? "";
+  for (const padrao of PADROES_GENERO_FIXO) {
+    expect(texto).not.toMatch(padrao);
+  }
+}
+
+describe("Linguagem neutra de gênero — participante", () => {
+  it.each([
+    ["Alexandre", "Estou disponível para conversar"],
+    ["Jeruska", "Estou apenas explorando"],
+    ["Ariel", "Estou considerando terapia"],
+    ["Dani", "Estou disponível para conversar"],
+  ])(
+    "nome '%s' com intenção '%s' chega ao relatório e ao feedback sem flexão fixa de gênero",
+    async (nome, intencaoLabel) => {
+      render(<QuizFlow />);
+
+      // q01–q11
+      answer(DEMO_Q01.opcoes[0].label);
+      for (const questao of DEMO_QUESTIONS_MEIO) {
+        answer(questao.opcoes[0].label);
+      }
+      textoSemFlexaoDeGenero();
+
+      // q12 (a ou b, tanto faz para este teste) + q13–q15
+      answer(screen.getAllByRole("radio")[0].textContent ?? "");
+      for (const questao of DEMO_QUESTIONS_FIM) {
+        answer(questao.opcoes[0].label);
+      }
+
+      // processamento → prévia do mapa
+      await screen.findByText("Preparando o seu mapa…");
+      textoSemFlexaoDeGenero();
+      fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+      await screen.findByText("Casa-Refúgio");
+      textoSemFlexaoDeGenero();
+      fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+
+      // intenção
+      await screen.findByRole("radiogroup", {
+        name: "Intenção em relação à terapia",
+      });
+      textoSemFlexaoDeGenero();
+      fireEvent.click(screen.getByRole("radio", { name: intencaoLabel }));
+
+      // ponte
+      await screen.findByText("Conversar com a Jeruska");
+      textoSemFlexaoDeGenero();
+      fireEvent.click(screen.getByText("Conversar com a Jeruska"));
+
+      // mapa pronto
+      await screen.findByRole("heading", { name: "Seu mapa está pronto" });
+      textoSemFlexaoDeGenero();
+      fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+
+      // captura
+      await screen.findByRole("heading", { name: "Para guardar seu mapa" });
+      fireEvent.change(screen.getByLabelText("Nome"), {
+        target: { value: nome },
+      });
+      fireEvent.click(
+        screen.getByRole("checkbox", { name: /Autorizo o armazenamento/ }),
+      );
+      textoSemFlexaoDeGenero();
+      fireEvent.click(screen.getByRole("button", { name: "Ver meu resultado" }));
+
+      // relatório
+      await screen.findByText(new RegExp(`${nome}, este é o espaço reservado`));
+      textoSemFlexaoDeGenero();
+      if (intencaoLabel === "Estou disponível para conversar") {
+        expect(document.body.textContent).toMatch(
+          /Você chega até aqui com abertura para conversar\./,
+        );
+      }
+
+      // feedback
+      fireEvent.click(screen.getByRole("button", { name: "Deixar um feedback" }));
+      await screen.findByRole("heading", {
+        name: "O que você achou desta experiência?",
+      });
+      fireEvent.click(screen.getByRole("radio", { name: "5" }));
+      fireEvent.click(screen.getByRole("button", { name: "Enviar feedback" }));
+      await screen.findByRole("heading", { name: "Agradecemos." });
+      textoSemFlexaoDeGenero();
+    },
+  );
+});

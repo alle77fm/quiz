@@ -49,7 +49,7 @@ export const DEMO_Q01: DemoQuestion = {
   texto: "Com quem você mora atualmente?",
   opcoes: [
     { id: "so", label: "Vivo só", perfilMoradia: "sozinha" },
-    { id: "parceiro", label: "Vivo com parceiro(a)", perfilMoradia: "acompanhada" },
+    { id: "parceiro", label: "Vivo com parceiro ou parceira", perfilMoradia: "acompanhada" },
     { id: "familia", label: "Vivo com família", perfilMoradia: "acompanhada" },
     { id: "outras", label: "Vivo com outras pessoas", perfilMoradia: "acompanhada" },
   ],

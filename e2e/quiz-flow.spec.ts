@@ -129,7 +129,7 @@ test.describe("Fluxo do quiz — navegação, responsividade e capturas", () => 
     ).toBeVisible();
     await page.getByRole("radio", { name: "5" }).click();
     await page.getByRole("button", { name: "Enviar feedback" }).click();
-    await expect(page.getByRole("heading", { name: "Obrigado." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Agradecemos." })).toBeVisible();
   });
 
   for (const viewport of SNAPSHOT_VIEWPORTS) {
@@ -273,13 +273,17 @@ test.describe("Bifurcação estrutural q12a/q12b", () => {
 });
 
 /** Percorre o fluxo completo até o relatório (tela de resultado). */
-async function chegarAoRelatorio(page: Page, nome = "Maria Teste") {
+async function chegarAoRelatorio(
+  page: Page,
+  nome = "Maria Teste",
+  intencaoLabel = "Estou apenas explorando",
+) {
   await page.goto("/quiz");
   await completeAllQuestions(page, 15);
   await expect(page.getByText("Preparando o seu mapa")).toBeVisible();
   await page.getByRole("button", { name: "Continuar" }).click();
   await page.getByRole("button", { name: "Continuar" }).click();
-  await page.getByRole("radio").first().click();
+  await page.getByRole("radio", { name: intencaoLabel }).click();
   await page.getByText("Conversar com a Jeruska").click();
   await page.getByRole("button", { name: "Continuar" }).click();
   await page.getByLabel("Nome").fill(nome);
@@ -288,6 +292,11 @@ async function chegarAoRelatorio(page: Page, nome = "Maria Teste") {
     .check();
   await page.getByRole("button", { name: "Ver meu resultado" }).click();
 }
+
+/** Padrões de flexão de gênero fixa dirigidos à participante — não
+ * confundir com palavras legítimas referindo-se a objetos/espaços. */
+const PADROES_GENERO_FIXO =
+  /voc[eê]\s+est[aá]\s+pront[ao]\b|estou\s+pront[ao]\b|voc[eê]\s+se\s+sente\s+acolhid[ao]\b|voc[eê]\s+chega\s+at[ée]\s+aqui\s+pront[ao]\b|bem-vind[ao]\b|obrigad[ao]\s+por\s+participar|vivo com parceiro\(a\)/i;
 
 test.describe("Relatório de homologação — estrutura completa", () => {
   test("relatório contém as 12 seções estruturais e não se limita a um resumo", async ({
@@ -335,6 +344,62 @@ test.describe("Relatório de homologação — estrutura completa", () => {
     );
     // nota de transparência precisa existir em algum lugar da página
     expect(texto).toMatch(/estrutura que receberá seu relatório personalizado/);
+  });
+});
+
+test.describe("Linguagem neutra de gênero — participante", () => {
+  test('nome "Alexandre" + intenção "pronto para conversar" chega ao relatório com a frase neutra aprovada', async ({
+    page,
+  }) => {
+    await chegarAoRelatorio(page, "Alexandre", "Estou disponível para conversar");
+
+    await expect(
+      page.getByText(/Alexandre, este é o espaço reservado/),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Você chega até aqui com abertura para conversar."),
+    ).toBeVisible();
+
+    const texto = await page.locator("body").innerText();
+    expect(texto).not.toMatch(PADROES_GENERO_FIXO);
+
+    // segue até o feedback e confirma o agradecimento neutro
+    await page.getByRole("button", { name: "Deixar um feedback" }).click();
+    await page.getByRole("radio", { name: "5" }).click();
+    await page.getByRole("button", { name: "Enviar feedback" }).click();
+    await expect(page.getByRole("heading", { name: "Agradecemos." })).toBeVisible();
+    const textoFeedback = await page.locator("body").innerText();
+    expect(textoFeedback).not.toMatch(PADROES_GENERO_FIXO);
+  });
+
+  for (const [nome, intencaoLabel] of [
+    ["Jeruska", "Estou apenas explorando"],
+    ["Ariel", "Estou considerando terapia"],
+    ["Dani", "Estou disponível para conversar"],
+  ] as const) {
+    test(`nome "${nome}" chega ao relatório sem flexão fixa de gênero`, async ({
+      page,
+    }) => {
+      await chegarAoRelatorio(page, nome, intencaoLabel);
+      await expect(
+        page.getByText(new RegExp(`${nome}, este é o espaço reservado`)),
+      ).toBeVisible();
+
+      const texto = await page.locator("body").innerText();
+      expect(texto).not.toMatch(PADROES_GENERO_FIXO);
+    });
+  }
+
+  test("q01 não usa parênteses de gênero na opção de parceiro(a)", async ({
+    page,
+  }) => {
+    await page.goto("/quiz");
+    await expect(
+      page.getByRole("radio", { name: "Vivo com parceiro ou parceira" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("radio", { name: "Vivo com parceiro(a)" }),
+    ).toHaveCount(0);
   });
 });
 

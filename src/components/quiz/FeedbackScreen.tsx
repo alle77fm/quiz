@@ -11,9 +11,9 @@ export function FeedbackScreen() {
     return (
       <div className="flex flex-col items-center gap-4 text-center">
         <h1 className="font-display text-2xl font-extrabold text-cream">
-          Obrigado.
+          Agradecemos.
         </h1>
-        <p className="text-muted">Seu feedback foi registrado.</p>
+        <p className="text-muted">Sua participação foi registrada.</p>
         <Link href="/" className="text-sm text-amber underline underline-offset-4">
           Voltar ao início
         </Link>

@@ -3,7 +3,7 @@ export type Intencao = "explorando" | "considerando" | "pronto_para_conversar";
 const OPCOES: { id: Intencao; label: string }[] = [
   { id: "explorando", label: "Estou apenas explorando" },
   { id: "considerando", label: "Estou considerando terapia" },
-  { id: "pronto_para_conversar", label: "Estou pronta para conversar" },
+  { id: "pronto_para_conversar", label: "Estou disponível para conversar" },
 ];
 
 type IntentionScreenProps = {

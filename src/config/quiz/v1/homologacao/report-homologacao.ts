@@ -95,6 +95,21 @@ export const REPORT_DIRECAO_TEXTO =
 
 export type Intencao = "explorando" | "considerando" | "pronto_para_conversar";
 
+// Linguagem neutra de propósito: o produto não coleta gênero, então
+// nenhum texto pode depender de flexão de gênero nem de inferência pelo
+// nome (docs/LANGUAGE_RULES.md). Nenhuma das três frases flexiona
+// adjetivo concordando com a participante.
+const TEXTO_CHEGADA: Record<Intencao, string> = {
+  explorando: "Você chega até aqui com vontade de explorar esse momento.",
+  considerando: "Você chega até aqui considerando uma conversa.",
+  pronto_para_conversar: "Você chega até aqui com abertura para conversar.",
+};
+
+export function textoChegada(intencao: Intencao | null): string {
+  if (!intencao) return TEXTO_CHEGADA.explorando;
+  return TEXTO_CHEGADA[intencao];
+}
+
 const TEXTO_CONVITE: Record<Intencao, string> = {
   explorando:
     "Na versão final, este espaço vai te convidar a continuar explorando, no seu tempo.",

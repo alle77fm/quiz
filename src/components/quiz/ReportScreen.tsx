@@ -6,6 +6,7 @@ import {
   REPORT_NOTA_TRANSPARENCIA,
   textoAbertura,
   textoAtencao,
+  textoChegada,
   textoComplementar,
   textoContextoMoradia,
   textoConvite,
@@ -80,6 +81,7 @@ export function ReportScreen({
         <h1 className="mt-1 font-display text-2xl font-extrabold leading-tight text-cream sm:text-3xl">
           {textoAbertura(nome)}
         </h1>
+        <p className="mt-1 text-sm text-muted">{textoChegada(intencao)}</p>
       </div>
 
       <Secao eyebrow={`Seu mapa — ${mapa}`}>
