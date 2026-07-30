@@ -3,12 +3,13 @@
  *
  * Isolada de `src/config/quiz/v1/homologacao/demo-questions.ts` de
  * propósito: aquele arquivo só resolve navegação (qual pergunta/opção
- * aparece); este arquivo é o único lugar onde peso vira número. Nenhum
- * peso aqui foi aprovado pela psicóloga — a tabela definitiva depende
- * da ratificação das seis definições (docs/SCORING_MATRIX.md §1.1) e da
- * tabela pergunta→dimensão completa. Este é o motor inicial que permite
- * uma demonstração comercial com variação real, substituível peça por
- * peça quando a matriz oficial chegar.
+ * aparece); este arquivo é o único lugar onde peso vira número. As seis
+ * definições de dimensão já são aprovadas pela Jeruska
+ * (docs/SCORING_MATRIX.md §1.1) — o que continua pendente aqui é a
+ * tabela pergunta→dimensão completa e os pesos concretos em si, ambos
+ * ainda não aprovados por ela. Este é o motor inicial que permite uma
+ * demonstração comercial com variação real, substituível peça por peça
+ * quando a matriz oficial chegar.
  *
  * Faixa fechada: -2 a 2 (docs/SCORING_MATRIX.md §3). q01 conta para o
  * score (mesma fonte, §5); q15 nunca conta (usado só para a direção do

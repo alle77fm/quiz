@@ -41,19 +41,17 @@ Ordem canônica fixa dos quatro mapas (seção 5.5 da especificação original):
 casa-refugio · casa-de-reencontro · casa-dos-vinculos · casa-em-renovacao
 ```
 
-### 1.1 Definições operacionais — `[PENDENTE · JERUSKA]`
+### 1.1 Definições operacionais — aprovadas pela Jeruska
 
-Uma frase por dimensão, descritiva e operacional, não clínica. **Item 1 da fila de
-escrita** (ver `CONTENT_KIT.md` §0) — sem elas, nenhum peso pode ser atribuído.
+Uma frase por dimensão, descritiva e operacional, não clínica. Redigidas
+originalmente por Alexandre a partir do posicionamento público da profissional
+e, desde então, aprovadas pela psicóloga Jeruska Maciel — não são mais
+redação provisória.
 
-Toda definição deve obedecer à restrição fechada do §7: as seis dimensões são
+Toda definição obedece à restrição fechada do §7: as seis dimensões são
 positivamente orientadas, sem exceção.
 
-**Redação provisória — não validada**
-
-Redigido por Alexandre a partir do posicionamento público da profissional, para
-permitir o planejamento da cobertura e da distribuição de pesos. Não constitui
-validação clínica. Será substituído pela redação da psicóloga.
+**Definições aprovadas pela Jeruska.**
 
 **ACOLHIMENTO** — Acolhimento representa a presença de segurança, escuta e
 conforto nas relações e nos espaços da casa, permitindo viver e se expressar com
@@ -78,8 +76,9 @@ pequenos passos conscientes, fortalecendo vitalidade, autonomia e abertura para
 mudanças possíveis.
 
 As seis são positivamente orientadas: score alto significa maior presença
-percebida do recurso. A ratificação dimensão por dimensão continua
-`[PENDENTE · JERUSKA]` e continua no Grupo A (`CONTENT_KIT.md` §8).
+percebida do recurso. A ratificação dimensão por dimensão foi concluída — as
+seis definições acima são aprovadas pela Jeruska, não mais pendência do
+Grupo A (`CONTENT_KIT.md` §8).
 
 #### Questões para a validação
 
@@ -97,10 +96,11 @@ percebida do recurso. A ratificação dimensão por dimensão continua
 
 #### Uso permitido
 
-Estas definições provisórias permitem planejar cobertura, esboçar a tabela
-pergunta → dimensão e discutir os pares mapa → eixo. **Não autorizam** preencher
-pesos concretos, alternativas, `reportEcho`, blocos de relatório, critérios dos
-níveis de apoio ou textos de tela.
+Estas definições aprovadas permitem planejar cobertura, esboçar a tabela
+pergunta → dimensão e discutir os pares mapa → eixo. **Não autorizam**, por si
+só, preencher pesos concretos, alternativas, `reportEcho`, blocos de relatório,
+critérios dos níveis de apoio ou textos de tela — cada um desses itens segue
+como pendência própria, listada nas seções correspondentes deste documento.
 
 ## 2. Contribuição de perguntas para dimensões
 
@@ -232,15 +232,15 @@ lógica invertida no MVP.**
 
 Isso fecha, nesta revisão, a pendência de mecanismo que a Revisão 1 deixou aberta —
 não há mais duas leituras possíveis sobre se a direcionalidade poderia se inverter
-dimensão a dimensão. A Jeruska ratifica cada definição **obedecendo a esta regra**;
-ela não escolhe se a dimensão é positiva ou invertida — isso já está fechado.
+dimensão a dimensão. A Jeruska ratificou cada definição (§1.1) **obedecendo a esta
+regra**; a direcionalidade em si não era escolha dela — isso já estava fechado
+antes da ratificação.
 
-`movimento` também deve ter definição positivamente orientada. Registrando um
-limite do que ela não pode significar, sem propor o que significa (conteúdo
-continua `[PENDENTE · JERUSKA]`): `movimento` não deve ser interpretada como
-agitação, impulsividade, instabilidade ou excesso de atividade — essas seriam
-leituras que tornariam "score alto" equivalente a "menos recurso", contrariando a
-orientação positiva fechada acima.
+A definição aprovada de `movimento` (§1.1) já é positivamente orientada, coerente
+com esta restrição: `movimento` não deve ser interpretada como agitação,
+impulsividade, instabilidade ou excesso de atividade — essas seriam leituras que
+tornariam "score alto" equivalente a "menos recurso", contrariando a orientação
+positiva fechada acima.
 
 ## 8. Mapa principal — mecanismo fechado (Opção A: par de dimensões)
 

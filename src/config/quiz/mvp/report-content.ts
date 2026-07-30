@@ -4,12 +4,12 @@
  * Diferente do compositor anterior (que era puramente estrutural e não
  * derivava de cálculo real), este texto é gerado a partir do
  * `ScoreSnapshot` de `engine.ts` — a variação entre percursos é real.
- * O que continua pendente de validação da psicóloga é a REDAÇÃO
- * definitiva de cada bloco (docs/REPORT_COMPOSER.md) e a ratificação
- * das seis definições de dimensão (docs/SCORING_MATRIX.md §1.1). As
- * frases descritivas de cada dimensão abaixo reaproveitam a redação
- * provisória já registrada naquele documento — não são conteúdo novo,
- * nem clínico.
+ * As seis definições de dimensão (docs/SCORING_MATRIX.md §1.1) já são
+ * aprovadas pela Jeruska — o que continua pendente de validação dela é
+ * a REDAÇÃO definitiva de cada bloco do relatório
+ * (docs/REPORT_COMPOSER.md), não as definições em si. As frases
+ * descritivas de cada dimensão abaixo reaproveitam a redação aprovada
+ * já registrada naquele documento — não são conteúdo novo.
  */
 
 import type { Dimension } from "@/config/quiz/mvp/dimensions";
@@ -19,8 +19,9 @@ import type { Intencao } from "@/components/quiz/IntentionScreen";
 
 export type PerfilMoradia = "sozinha" | "acompanhada";
 
-/** Redação provisória (docs/SCORING_MATRIX.md §1.1), não validada pela
- * psicóloga — usada só para compor uma frase legível por dimensão. */
+/** Redação aprovada pela Jeruska (docs/SCORING_MATRIX.md §1.1) — usada
+ * aqui só para compor uma frase legível por dimensão dentro do bloco;
+ * o texto final de cada bloco do relatório continua pendente dela. */
 const DESCRICAO_DIMENSAO: Record<Dimension, string> = {
   acolhimento: "a presença de segurança, escuta e conforto nas relações e nos espaços da casa",
   limites: "a capacidade de reconhecer, comunicar e preservar necessidades, tempo, espaço e escolhas pessoais",

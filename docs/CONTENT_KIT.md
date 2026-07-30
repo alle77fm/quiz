@@ -25,11 +25,11 @@
 ## 0. Antes de qualquer tabela — ordem da fila e restrição que a condiciona
 
 **Item 1 da fila de escrita da psicóloga: as seis definições operacionais de
-dimensão** (Grupo E, §6). Sem elas, nenhum peso pode ser atribuído a nenhuma
-alternativa — a tabela de contribuição pergunta→dimensão (`SCORING_MATRIX.md` §2)
-não pode ser preenchida sem saber o que cada dimensão significa operacionalmente.
-Todo o restante do inventário abaixo (Grupo A em diante) fica bloqueado até essas
-seis frases existirem.
+dimensão** (Grupo E, §6) — **já escritas e aprovadas pela Jeruska**
+(`SCORING_MATRIX.md` §1.1), portanto não bloqueiam mais o restante do
+inventário. O que ainda falta preencher é a tabela de contribuição
+pergunta→dimensão (`SCORING_MATRIX.md` §2), que depende dessas definições
+já existirem — não de elas serem escritas.
 
 **Restrição que condiciona a distribuição de pesos:** `SCORING_MATRIX.md` §4 exige
 que **toda dimensão receba contribuição de no mínimo três perguntas**. Isso não é um
@@ -170,8 +170,9 @@ autoriza um processamento que já ocorreu — ver `PRIVACY_RULES.md` §1.1.
 | Definição de dimensão (uma frase cada) | 6 |
 | **Subtotal** | **6** |
 
-**Regra adicional deste grupo:** descritiva e operacional, não clínica. **Item 1 da
-fila de escrita** — ver §0.
+**Status: concluído e aprovado pela Jeruska** (`SCORING_MATRIX.md` §1.1) — não é
+mais pendência. Regra que valeu para este grupo: descritiva e operacional, não
+clínica. Foi o item 1 da fila de escrita — ver §0.
 
 ## 7. Total consolidado
 
@@ -217,18 +218,18 @@ por fase vive nesta tabela, não em um terceiro marcador.
 
 Responsável: Jeruska, em todos os itens.
 
-- Definições operacionais das seis dimensões (`SCORING_MATRIX.md` §1.1) — **item 1
-  da fila**, ver §0 acima: sem elas nenhum peso pode ser atribuído, e todo o
-  restante deste grupo fica bloqueado atrás dele.
+- ~~Definições operacionais das seis dimensões~~ (`SCORING_MATRIX.md` §1.1) —
+  **concluído**: já escritas e aprovadas pela Jeruska. Deixadas de referência para
+  o restante deste grupo, que ainda depende delas existirem (e agora existem).
 - Pesos concretos das alternativas (`SCORING_MATRIX.md` §3).
 - Tabela pergunta → dimensão (`SCORING_MATRIX.md` §2).
 - Tabela mapa → par de dimensões, `eixoDoMapa` (`SCORING_MATRIX.md` §8.1).
 - Limiar exato do nível 1 de apoio (`REPORT_COMPOSER.md` §6.1).
 - Combinações nomeadas do nível 2 de apoio (`REPORT_COMPOSER.md` §6.1).
 - Pesos de `q12a` e `q12b` (parte da tabela pergunta → dimensão).
-- Ratificação da orientação positiva das seis dimensões, dimensão por dimensão
-  (`SCORING_MATRIX.md` §7) — o mecanismo já está fechado; falta a Jeruska
-  confirmar que cada definição que ela escrever respeita essa orientação.
+- ~~Ratificação da orientação positiva das seis dimensões, dimensão por
+  dimensão~~ (`SCORING_MATRIX.md` §7) — **concluído**: as seis definições
+  aprovadas (§1.1) já respeitam essa orientação, confirmado pela Jeruska.
 - **Ratificação do critério de seleção da dimensão complementar** (`SCORING_MATRIX.md`
   §10.2, item novo desta correção) — duas opções documentadas (maior necessidade,
   vigente, ou maior score normalizado); a regra vigente já pode ser usada para
